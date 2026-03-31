@@ -198,9 +198,7 @@ export default function App() {
               <DebugPanel />
             </div>
           )}
-          {urlImportMsg && (
-            <div className="url-import-toast">{urlImportMsg}</div>
-          )}
+          {urlImportMsg && <div className="url-import-toast">{urlImportMsg}</div>}
         </div>
 
         {rightPanel === "properties" && (

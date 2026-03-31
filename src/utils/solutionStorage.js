@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'vp_solutions';
+const STORAGE_KEY = "vp_solutions";
 
 function readAll() {
   try {
@@ -21,7 +21,7 @@ export function saveSolution({ name, notes, flow, challengeId }) {
   solutions.push({
     id: `sol_${Date.now()}`,
     name,
-    notes: notes || '',
+    notes: notes || "",
     flow,
     challengeId: challengeId || null,
     createdAt: new Date().toISOString(),
@@ -35,9 +35,7 @@ export function deleteSolution(id) {
 }
 
 export function updateSolutionNotes(id, notes) {
-  const solutions = readAll().map((s) =>
-    s.id === id ? { ...s, notes } : s
-  );
+  const solutions = readAll().map((s) => (s.id === id ? { ...s, notes } : s));
   writeAll(solutions);
 }
 

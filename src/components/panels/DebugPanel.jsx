@@ -1,4 +1,4 @@
-import { useFlowStore } from '../../store/flowStore';
+import { useFlowStore } from "../../store/flowStore";
 
 export default function DebugPanel() {
   const debugMode = useFlowStore((s) => s.debugMode);
@@ -38,11 +38,12 @@ export default function DebugPanel() {
         </div>
         {currentStep && (
           <div className="debug-current">
-            <span className="debug-node-name">{"> "}{currentStep.nodeLabel}</span>
+            <span className="debug-node-name">
+              {"> "}
+              {currentStep.nodeLabel}
+            </span>
             <span className="debug-result">
-              {typeof currentStep.result === 'object'
-                ? JSON.stringify(currentStep.result)
-                : String(currentStep.result)}
+              {typeof currentStep.result === "object" ? JSON.stringify(currentStep.result) : String(currentStep.result)}
             </span>
           </div>
         )}
@@ -56,11 +57,9 @@ export default function DebugPanel() {
             const isActive = node.id === activeNodeId;
             if (res === undefined) return null;
             return (
-              <div key={node.id} className={`debug-watch-item ${isActive ? 'active' : ''}`}>
+              <div key={node.id} className={`debug-watch-item ${isActive ? "active" : ""}`}>
                 <span className="watch-node">{node.data?.name || node.data?.label || node.type}</span>
-                <span className="watch-value">
-                  {typeof res === 'object' ? JSON.stringify(res) : String(res)}
-                </span>
+                <span className="watch-value">{typeof res === "object" ? JSON.stringify(res) : String(res)}</span>
               </div>
             );
           })}
@@ -71,15 +70,13 @@ export default function DebugPanel() {
           {debugSteps.map((step, i) => (
             <div
               key={i}
-              className={`debug-step-item ${i === debugStep ? 'current' : ''} ${i < debugStep ? 'done' : ''}`}
+              className={`debug-step-item ${i === debugStep ? "current" : ""} ${i < debugStep ? "done" : ""}`}
               onClick={() => setDebugStep(i)}
             >
               <span className="step-num">{i + 1}.</span>
               <span className="step-label">{step.nodeLabel}</span>
               <span className="step-result">
-                {typeof step.result === 'object'
-                  ? JSON.stringify(step.result)
-                  : String(step.result ?? '—')}
+                {typeof step.result === "object" ? JSON.stringify(step.result) : String(step.result ?? "—")}
               </span>
             </div>
           ))}
@@ -92,7 +89,7 @@ export default function DebugPanel() {
               <div key={i} className="debug-console-line">
                 <span className="console-prefix">&gt;</span>
                 <span className="console-value">
-                  {typeof log.value === 'object' ? JSON.stringify(log.value) : String(log.value)}
+                  {typeof log.value === "object" ? JSON.stringify(log.value) : String(log.value)}
                 </span>
               </div>
             ))}

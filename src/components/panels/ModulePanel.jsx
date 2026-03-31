@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useFlowStore } from '../../store/flowStore';
+import { useState } from "react";
+import { useFlowStore } from "../../store/flowStore";
 
 export default function ModulePanel() {
   const modules = useFlowStore((s) => s.modules);
@@ -9,8 +9,8 @@ export default function ModulePanel() {
   const deleteModule = useFlowStore((s) => s.deleteModule);
   const loadModuleAsNodes = useFlowStore((s) => s.loadModuleAsNodes);
 
-  const [moduleName, setModuleName] = useState('');
-  const [moduleDesc, setModuleDesc] = useState('');
+  const [moduleName, setModuleName] = useState("");
+  const [moduleDesc, setModuleDesc] = useState("");
   const [expanded, setExpanded] = useState(null);
 
   const handleSave = () => {
@@ -22,8 +22,8 @@ export default function ModulePanel() {
       edges,
       createdAt: new Date().toISOString(),
     });
-    setModuleName('');
-    setModuleDesc('');
+    setModuleName("");
+    setModuleDesc("");
   };
 
   return (
@@ -49,14 +49,12 @@ export default function ModulePanel() {
       </div>
 
       <div className="module-list">
-        {Object.entries(modules).length === 0 && (
-          <div className="empty-message">No modules saved yet</div>
-        )}
+        {Object.entries(modules).length === 0 && <div className="empty-message">No modules saved yet</div>}
         {Object.entries(modules).map(([name, mod]) => (
           <div key={name} className="module-item">
             <div className="module-item-header" onClick={() => setExpanded(expanded === name ? null : name)}>
               <span>MOD: {name}</span>
-              <span className="module-arrow">{expanded === name ? '▲' : '▼'}</span>
+              <span className="module-arrow">{expanded === name ? "▲" : "▼"}</span>
             </div>
             {expanded === name && (
               <div className="module-item-body">
@@ -66,16 +64,10 @@ export default function ModulePanel() {
                 </p>
                 <p className="module-meta">Saved: {new Date(mod.createdAt).toLocaleString()}</p>
                 <div className="module-actions">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => loadModuleAsNodes(name)}
-                  >
+                  <button className="btn btn-secondary" onClick={() => loadModuleAsNodes(name)}>
                     LOAD
                   </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => deleteModule(name)}
-                  >
+                  <button className="btn btn-danger" onClick={() => deleteModule(name)}>
                     DEL
                   </button>
                 </div>

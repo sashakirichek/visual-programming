@@ -4,10 +4,22 @@ import { useFlowStore } from "../../store/flowStore";
 const DISPLAY_TYPES = ["inferred", "table", "gauge", "progress", "slider", "chart", "text"];
 
 const OUTPUT_PARAMS = {
-  gauge:    [{ id: "min", label: "Min", def: "0" }, { id: "max", label: "Max", def: "100" }, { id: "color", label: "Color", type: "color", def: "#00e5ff" }],
-  progress: [{ id: "min", label: "Min", def: "0" }, { id: "max", label: "Max", def: "100" }, { id: "color", label: "Color", type: "color", def: "#00e5ff" }],
-  slider:   [{ id: "min", label: "Min", def: "0" }, { id: "max", label: "Max", def: "100" }, { id: "color", label: "Color", type: "color", def: "#ffd600" }],
-  chart:    [{ id: "color", label: "Color", type: "color", def: "#00e5ff" }],
+  gauge: [
+    { id: "min", label: "Min", def: "0" },
+    { id: "max", label: "Max", def: "100" },
+    { id: "color", label: "Color", type: "color", def: "#00e5ff" },
+  ],
+  progress: [
+    { id: "min", label: "Min", def: "0" },
+    { id: "max", label: "Max", def: "100" },
+    { id: "color", label: "Color", type: "color", def: "#00e5ff" },
+  ],
+  slider: [
+    { id: "min", label: "Min", def: "0" },
+    { id: "max", label: "Max", def: "100" },
+    { id: "color", label: "Color", type: "color", def: "#ffd600" },
+  ],
+  chart: [{ id: "color", label: "Color", type: "color", def: "#00e5ff" }],
 };
 
 const DATA_HINTS = {
@@ -136,8 +148,8 @@ function ChartViz({ value, color }) {
   const arr = Array.isArray(value)
     ? value.map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
     : typeof value === "object" && value
-    ? Object.values(value).map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
-    : [];
+      ? Object.values(value).map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
+      : [];
   if (arr.length === 0) return <span className="output-placeholder">No data</span>;
   const max = Math.max(...arr);
   const min = Math.min(...arr, 0);
@@ -159,7 +171,9 @@ function ChartViz({ value, color }) {
       {labels && (
         <div className="output-chart-labels">
           {labels.map((l, i) => (
-            <span key={i} className="output-chart-label">{l}</span>
+            <span key={i} className="output-chart-label">
+              {l}
+            </span>
           ))}
         </div>
       )}

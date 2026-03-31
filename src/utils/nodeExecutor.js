@@ -4,21 +4,21 @@
  */
 
 const OPERATORS = {
-  '+': (a, b) => a + b,
-  '-': (a, b) => a - b,
-  '*': (a, b) => a * b,
-  '/': (a, b) => b !== 0 ? a / b : 'Error: division by zero',
-  '%': (a, b) => a % b,
-  '**': (a, b) => a ** b,
-  '===': (a, b) => a === b,
-  '!==': (a, b) => a !== b,
-  '>': (a, b) => a > b,
-  '<': (a, b) => a < b,
-  '>=': (a, b) => a >= b,
-  '<=': (a, b) => a <= b,
-  '&&': (a, b) => a && b,
-  '||': (a, b) => a || b,
-  '??': (a, b) => a ?? b,
+  "+": (a, b) => a + b,
+  "-": (a, b) => a - b,
+  "*": (a, b) => a * b,
+  "/": (a, b) => (b !== 0 ? a / b : "Error: division by zero"),
+  "%": (a, b) => a % b,
+  "**": (a, b) => a ** b,
+  "===": (a, b) => a === b,
+  "!==": (a, b) => a !== b,
+  ">": (a, b) => a > b,
+  "<": (a, b) => a < b,
+  ">=": (a, b) => a >= b,
+  "<=": (a, b) => a <= b,
+  "&&": (a, b) => a && b,
+  "||": (a, b) => a || b,
+  "??": (a, b) => a ?? b,
 };
 
 const MATH_FUNCTIONS = {
@@ -53,8 +53,8 @@ const STRING_FUNCTIONS = {
   toUpperCase: (s) => String(s).toUpperCase(),
   toLowerCase: (s) => String(s).toLowerCase(),
   trim: (s) => String(s).trim(),
-  split: (s, sep) => String(s).split(sep ?? ''),
-  join: (arr, sep) => Array.isArray(arr) ? arr.join(sep ?? ',') : String(arr),
+  split: (s, sep) => String(s).split(sep ?? ""),
+  join: (arr, sep) => (Array.isArray(arr) ? arr.join(sep ?? ",") : String(arr)),
   includes: (s, sub) => String(s).includes(sub),
   startsWith: (s, sub) => String(s).startsWith(sub),
   endsWith: (s, sub) => String(s).endsWith(sub),
@@ -64,34 +64,60 @@ const STRING_FUNCTIONS = {
   repeat: (s, n) => String(s).repeat(n),
   padStart: (s, len, fill) => String(s).padStart(len, fill),
   padEnd: (s, len, fill) => String(s).padEnd(len, fill),
-  concat: (...args) => args.join(''),
+  concat: (...args) => args.join(""),
   toString: (v) => String(v),
   parseInt: (s, radix) => parseInt(s, radix),
   parseFloat: (s) => parseFloat(s),
   Number: (v) => Number(v),
   Boolean: (v) => Boolean(v),
   JSON_stringify: (v) => JSON.stringify(v),
-  JSON_parse: (s) => { try { return JSON.parse(s); } catch { return null; } },
+  JSON_parse: (s) => {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return null;
+    }
+  },
 };
 
 const ARRAY_FUNCTIONS = {
-  map: (arr, fn) => Array.isArray(arr) ? arr.map(fn) : [],
-  filter: (arr, fn) => Array.isArray(arr) ? arr.filter(fn) : [],
-  reduce: (arr, fn, init) => Array.isArray(arr) ? arr.reduce(fn, init) : [],
-  find: (arr, fn) => Array.isArray(arr) ? arr.find(fn) : undefined,
-  some: (arr, fn) => Array.isArray(arr) ? arr.some(fn) : false,
-  every: (arr, fn) => Array.isArray(arr) ? arr.every(fn) : false,
-  includes: (arr, v) => Array.isArray(arr) ? arr.includes(v) : false,
-  indexOf: (arr, v) => Array.isArray(arr) ? arr.indexOf(v) : -1,
-  push: (arr, v) => { const a = [...(arr || [])]; a.push(v); return a; },
-  pop: (arr) => { const a = [...(arr || [])]; a.pop(); return a; },
-  shift: (arr) => { const a = [...(arr || [])]; a.shift(); return a; },
-  unshift: (arr, v) => { const a = [...(arr || [])]; a.unshift(v); return a; },
-  splice: (arr, start, deleteCount) => { const a = [...(arr || [])]; a.splice(start, deleteCount); return a; },
-  slice: (arr, start, end) => Array.isArray(arr) ? arr.slice(start, end) : [],
+  map: (arr, fn) => (Array.isArray(arr) ? arr.map(fn) : []),
+  filter: (arr, fn) => (Array.isArray(arr) ? arr.filter(fn) : []),
+  reduce: (arr, fn, init) => (Array.isArray(arr) ? arr.reduce(fn, init) : []),
+  find: (arr, fn) => (Array.isArray(arr) ? arr.find(fn) : undefined),
+  some: (arr, fn) => (Array.isArray(arr) ? arr.some(fn) : false),
+  every: (arr, fn) => (Array.isArray(arr) ? arr.every(fn) : false),
+  includes: (arr, v) => (Array.isArray(arr) ? arr.includes(v) : false),
+  indexOf: (arr, v) => (Array.isArray(arr) ? arr.indexOf(v) : -1),
+  push: (arr, v) => {
+    const a = [...(arr || [])];
+    a.push(v);
+    return a;
+  },
+  pop: (arr) => {
+    const a = [...(arr || [])];
+    a.pop();
+    return a;
+  },
+  shift: (arr) => {
+    const a = [...(arr || [])];
+    a.shift();
+    return a;
+  },
+  unshift: (arr, v) => {
+    const a = [...(arr || [])];
+    a.unshift(v);
+    return a;
+  },
+  splice: (arr, start, deleteCount) => {
+    const a = [...(arr || [])];
+    a.splice(start, deleteCount);
+    return a;
+  },
+  slice: (arr, start, end) => (Array.isArray(arr) ? arr.slice(start, end) : []),
   concat: (a, b) => [...(a || []), ...(b || [])],
-  flat: (arr, depth) => Array.isArray(arr) ? arr.flat(depth ?? 1) : [],
-  flatMap: (arr, fn) => Array.isArray(arr) ? arr.flatMap(fn) : [],
+  flat: (arr, depth) => (Array.isArray(arr) ? arr.flat(depth ?? 1) : []),
+  flatMap: (arr, fn) => (Array.isArray(arr) ? arr.flatMap(fn) : []),
   sort: (arr, fn) => [...(arr || [])].sort(fn),
   reverse: (arr) => [...(arr || [])].reverse(),
   length: (arr) => (arr || []).length,
@@ -104,11 +130,11 @@ const ARRAY_FUNCTIONS = {
 };
 
 function parseValue(str) {
-  if (str === undefined || str === null || str === '') return str;
-  if (str === 'true') return true;
-  if (str === 'false') return false;
-  if (str === 'null') return null;
-  if (str === 'undefined') return undefined;
+  if (str === undefined || str === null || str === "") return str;
+  if (str === "true") return true;
+  if (str === "false") return false;
+  if (str === "null") return null;
+  if (str === "undefined") return undefined;
   try {
     const parsed = JSON.parse(str);
     return parsed;
@@ -117,12 +143,10 @@ function parseValue(str) {
   }
 }
 
-const CALLBACK_FUNCTIONS = new Set([
-  'map', 'filter', 'reduce', 'find', 'some', 'every', 'flatMap', 'sort',
-]);
+const CALLBACK_FUNCTIONS = new Set(["map", "filter", "reduce", "find", "some", "every", "flatMap", "sort"]);
 
 function parseLambda(str) {
-  if (!str || typeof str !== 'string') return null;
+  if (!str || typeof str !== "string") return null;
   const trimmed = str.trim();
   if (!trimmed) return null;
   try {
@@ -134,12 +158,12 @@ function parseLambda(str) {
 
 function getIncomingValue(nodeId, handleId, nodes, edges, results) {
   const incomingEdge = edges.find(
-    (e) => e.target === nodeId && (e.targetHandle === handleId || (!e.targetHandle && !handleId))
+    (e) => e.target === nodeId && (e.targetHandle === handleId || (!e.targetHandle && !handleId)),
   );
   if (!incomingEdge) return undefined;
   const sourceResult = results[incomingEdge.source];
   if (sourceResult === undefined) return undefined;
-  if (incomingEdge.sourceHandle && typeof sourceResult === 'object' && sourceResult !== null) {
+  if (incomingEdge.sourceHandle && typeof sourceResult === "object" && sourceResult !== null) {
     return sourceResult[incomingEdge.sourceHandle] ?? sourceResult;
   }
   return sourceResult;
@@ -192,9 +216,9 @@ export async function executeGraph(nodes, edges) {
     if (!node) continue;
 
     // Skip scope nodes themselves (they're containers, not executors)
-    if (node.type === 'scopeNode') {
-      results[nodeId] = `Scope: ${node.data?.name || 'unnamed'}`;
-      steps.push({ nodeId, result: results[nodeId], nodeLabel: node.data?.name || 'Scope' });
+    if (node.type === "scopeNode") {
+      results[nodeId] = `Scope: ${node.data?.name || "unnamed"}`;
+      steps.push({ nodeId, result: results[nodeId], nodeLabel: node.data?.name || "Scope" });
       continue;
     }
 
@@ -208,7 +232,7 @@ export async function executeGraph(nodes, edges) {
     results[nodeId] = result;
 
     // If this is a variable node inside a scope, store in scope's variable map
-    if (node.type === 'variableNode' && node.data?.name) {
+    if (node.type === "variableNode" && node.data?.name) {
       const scopeId = findNodeScope(node, nodes);
       if (scopeId && scopes[scopeId]) {
         scopes[scopeId].variables[node.data.name] = result;
@@ -223,12 +247,12 @@ export async function executeGraph(nodes, edges) {
 
 function buildScopeTree(nodes) {
   const scopes = {};
-  const scopeNodes = nodes.filter((n) => n.type === 'scopeNode');
+  const scopeNodes = nodes.filter((n) => n.type === "scopeNode");
 
   for (const scope of scopeNodes) {
     scopes[scope.id] = {
-      name: scope.data?.name || '',
-      type: scope.data?.scopeType || 'function',
+      name: scope.data?.name || "",
+      type: scope.data?.scopeType || "function",
       parentScope: null,
       variables: {},
     };
@@ -248,7 +272,7 @@ function findNodeScope(node, nodes) {
   // Walk up parentId chain to find the containing scope
   if (node.parentId) {
     const parent = nodes.find((n) => n.id === node.parentId);
-    if (parent && parent.type === 'scopeNode') return parent.id;
+    if (parent && parent.type === "scopeNode") return parent.id;
     if (parent) return findNodeScope(parent, nodes);
   }
   return null;
@@ -270,17 +294,17 @@ async function executeNode(node, nodes, edges, results, scopes, logs) {
   const { type, data } = node;
 
   switch (type) {
-    case 'inputNode': {
+    case "inputNode": {
       return parseValue(data.value);
     }
 
-    case 'outputNode': {
-      const val = getIncomingValue(node.id, 'value', nodes, edges, results);
+    case "outputNode": {
+      const val = getIncomingValue(node.id, "value", nodes, edges, results);
       return val;
     }
 
-    case 'variableNode': {
-      const input = getIncomingValue(node.id, 'value', nodes, edges, results);
+    case "variableNode": {
+      const input = getIncomingValue(node.id, "value", nodes, edges, results);
       if (input !== undefined) return input;
       // Try scope-based variable resolution
       if (data.name && scopes) {
@@ -293,27 +317,30 @@ async function executeNode(node, nodes, edges, results, scopes, logs) {
       return parseValue(data.value);
     }
 
-    case 'operatorNode': {
-      const op = data.operator || '+';
-      const a = getIncomingValue(node.id, 'a', nodes, edges, results);
-      const b = getIncomingValue(node.id, 'b', nodes, edges, results);
+    case "operatorNode": {
+      const op = data.operator || "+";
+      const a = getIncomingValue(node.id, "a", nodes, edges, results);
+      const b = getIncomingValue(node.id, "b", nodes, edges, results);
       const aVal = a !== undefined ? a : parseValue(data.aValue);
       const bVal = b !== undefined ? b : parseValue(data.bValue);
       if (OPERATORS[op]) return OPERATORS[op](aVal, bVal);
       return `Unknown operator: ${op}`;
     }
 
-    case 'functionNode': {
-      const fnName = data.functionName || '';
+    case "functionNode": {
+      const fnName = data.functionName || "";
       const args = [];
       for (let i = 0; i < 4; i++) {
         const arg = getIncomingValue(node.id, `arg${i}`, nodes, edges, results);
         if (arg !== undefined) args.push(arg);
-        else if (data[`arg${i}`] !== undefined && data[`arg${i}`] !== '') {
+        else if (data[`arg${i}`] !== undefined && data[`arg${i}`] !== "") {
           // For callback-expecting functions, parse lambda from the callback arg position
           if (CALLBACK_FUNCTIONS.has(fnName) && i === 1) {
             const fn = parseLambda(data[`arg${i}`]);
-            if (fn) { args.push(fn); continue; }
+            if (fn) {
+              args.push(fn);
+              continue;
+            }
           }
           args.push(parseValue(data[`arg${i}`]));
         }
@@ -324,23 +351,23 @@ async function executeNode(node, nodes, edges, results, scopes, logs) {
       return `Unknown function: ${fnName}`;
     }
 
-    case 'conditionNode': {
-      const condition = getIncomingValue(node.id, 'condition', nodes, edges, results);
-      const trueBranch = getIncomingValue(node.id, 'true', nodes, edges, results);
-      const falseBranch = getIncomingValue(node.id, 'false', nodes, edges, results);
+    case "conditionNode": {
+      const condition = getIncomingValue(node.id, "condition", nodes, edges, results);
+      const trueBranch = getIncomingValue(node.id, "true", nodes, edges, results);
+      const falseBranch = getIncomingValue(node.id, "false", nodes, edges, results);
       const cond = condition !== undefined ? condition : parseValue(data.condition);
       const trueVal = trueBranch !== undefined ? trueBranch : parseValue(data.trueValue);
       const falseVal = falseBranch !== undefined ? falseBranch : parseValue(data.falseValue);
       return cond ? trueVal : falseVal;
     }
 
-    case 'loopNode': {
-      const arr = getIncomingValue(node.id, 'array', nodes, edges, results);
+    case "loopNode": {
+      const arr = getIncomingValue(node.id, "array", nodes, edges, results);
       const inputArr = arr !== undefined ? arr : parseValue(data.array);
       if (!Array.isArray(inputArr)) return `Error: Expected array, got ${typeof inputArr}`;
-      const op = data.loopOp || 'forEach';
+      const op = data.loopOp || "forEach";
       const fn = parseLambda(data.transform);
-      if (op === 'forEach') {
+      if (op === "forEach") {
         inputArr.forEach((item, i) => {
           if (fn) {
             const out = fn(item, i, inputArr);
@@ -351,55 +378,67 @@ async function executeNode(node, nodes, edges, results, scopes, logs) {
         });
         return inputArr;
       }
-      if (op === 'map') return fn ? inputArr.map(fn) : inputArr.map((item) => item);
-      if (op === 'filter') return fn ? inputArr.filter(fn) : inputArr.filter(Boolean);
+      if (op === "map") return fn ? inputArr.map(fn) : inputArr.map((item) => item);
+      if (op === "filter") return fn ? inputArr.filter(fn) : inputArr.filter(Boolean);
       return inputArr;
     }
 
-    case 'jsonNode': {
-      const input = getIncomingValue(node.id, 'value', nodes, edges, results);
-      const op = data.jsonOp || 'parse';
-      if (op === 'template') {
-        let tpl = data.jsonValue || '{}';
+    case "jsonNode": {
+      const input = getIncomingValue(node.id, "value", nodes, edges, results);
+      const op = data.jsonOp || "parse";
+      if (op === "template") {
+        let tpl = data.jsonValue || "{}";
         tpl = tpl.replace(/\$\{([^}]+)\}/g, (_, varName) => {
           const trimmed = varName.trim();
           // Look up variable name from results of variableNode / inputNode
           for (const n of nodes) {
-            if ((n.type === 'variableNode' || n.type === 'inputNode') && n.data?.name === trimmed && results[n.id] !== undefined) {
+            if (
+              (n.type === "variableNode" || n.type === "inputNode") &&
+              n.data?.name === trimmed &&
+              results[n.id] !== undefined
+            ) {
               const v = results[n.id];
-              return typeof v === 'object' ? JSON.stringify(v) : String(v);
+              return typeof v === "object" ? JSON.stringify(v) : String(v);
             }
           }
           // Fallback: try scope resolution
           const scopeId = findNodeScope(node, nodes);
           if (scopeId) {
             const sv = resolveVariableInScope(trimmed, scopeId, scopes);
-            if (sv !== undefined) return typeof sv === 'object' ? JSON.stringify(sv) : String(sv);
+            if (sv !== undefined) return typeof sv === "object" ? JSON.stringify(sv) : String(sv);
           }
-          return '${' + trimmed + '}';
+          return "${" + trimmed + "}";
         });
-        try { return JSON.parse(tpl); } catch (e) { return `Template Error: ${e.message}`; }
+        try {
+          return JSON.parse(tpl);
+        } catch (e) {
+          return `Template Error: ${e.message}`;
+        }
       }
-      if (op === 'parse') {
-        const src = input !== undefined ? input : data.jsonValue || '{}';
-        try { return JSON.parse(src); } catch (e) { return `JSON Error: ${e.message}`; }
+      if (op === "parse") {
+        const src = input !== undefined ? input : data.jsonValue || "{}";
+        try {
+          return JSON.parse(src);
+        } catch (e) {
+          return `JSON Error: ${e.message}`;
+        }
       }
-      if (op === 'stringify') {
+      if (op === "stringify") {
         const val = input !== undefined ? input : parseValue(data.jsonValue);
         return JSON.stringify(val, null, 2);
       }
-      if (op === 'get') {
+      if (op === "get") {
         const obj = input !== undefined ? input : parseValue(data.jsonValue);
-        const path = data.path || '';
+        const path = data.path || "";
         if (!path) return obj;
-        return path.split('.').reduce((acc, key) => acc?.[key], obj);
+        return path.split(".").reduce((acc, key) => acc?.[key], obj);
       }
-      if (op === 'set') {
+      if (op === "set") {
         const obj = input !== undefined ? { ...input } : parseValue(data.jsonValue) || {};
-        const path = data.path || '';
+        const path = data.path || "";
         const value = parseValue(data.setValue);
         if (!path) return obj;
-        const keys = path.split('.');
+        const keys = path.split(".");
         let cur = obj;
         for (let i = 0; i < keys.length - 1; i++) {
           if (!cur[keys[i]]) cur[keys[i]] = {};
@@ -411,41 +450,52 @@ async function executeNode(node, nodes, edges, results, scopes, logs) {
       return input;
     }
 
-    case 'moduleNode': {
-      return `Module: ${data.moduleName || 'unnamed'}`;
+    case "moduleNode": {
+      return `Module: ${data.moduleName || "unnamed"}`;
     }
 
-    case 'apiNode': {
-      const method = (data.method || 'GET').toUpperCase();
-      const url = data.url || '';
-      if (!url) return 'Error: No URL provided';
+    case "apiNode": {
+      const method = (data.method || "GET").toUpperCase();
+      const url = data.url || "";
+      if (!url) return "Error: No URL provided";
       let parsedUrl;
       try {
         parsedUrl = new URL(url);
       } catch {
-        return 'Error: Invalid URL';
+        return "Error: Invalid URL";
       }
-      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-        return 'Error: Only http/https URLs allowed';
+      if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+        return "Error: Only http/https URLs allowed";
       }
       const opts = { method };
       if (data.headers) {
-        try { opts.headers = JSON.parse(data.headers); } catch { /* skip */ }
+        try {
+          opts.headers = JSON.parse(data.headers);
+        } catch {
+          /* skip */
+        }
       }
-      if ((method === 'POST' || method === 'PUT')) {
-        const bodyInput = getIncomingValue(node.id, 'body', nodes, edges, results);
-        const bodyStr = bodyInput !== undefined
-          ? (typeof bodyInput === 'object' ? JSON.stringify(bodyInput) : String(bodyInput))
-          : data.body || '';
+      if (method === "POST" || method === "PUT") {
+        const bodyInput = getIncomingValue(node.id, "body", nodes, edges, results);
+        const bodyStr =
+          bodyInput !== undefined
+            ? typeof bodyInput === "object"
+              ? JSON.stringify(bodyInput)
+              : String(bodyInput)
+            : data.body || "";
         if (bodyStr) {
           opts.body = bodyStr;
-          opts.headers = { 'Content-Type': 'application/json', ...opts.headers };
+          opts.headers = { "Content-Type": "application/json", ...opts.headers };
         }
       }
       try {
         const res = await fetch(url, opts);
         const text = await res.text();
-        try { return JSON.parse(text); } catch { return text; }
+        try {
+          return JSON.parse(text);
+        } catch {
+          return text;
+        }
       } catch (e) {
         return `Error: ${e.message}`;
       }

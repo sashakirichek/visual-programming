@@ -1,28 +1,28 @@
-import { useState } from 'react';
-import { useFlowStore } from '../../store/flowStore';
+import { useState } from "react";
+import { useFlowStore } from "../../store/flowStore";
 
 export default function JsonImportExportModal({ onClose }) {
   const exportToJson = useFlowStore((s) => s.exportToJson);
   const importFromJson = useFlowStore((s) => s.importFromJson);
-  const [tab, setTab] = useState('export');
-  const [importText, setImportText] = useState('');
-  const [message, setMessage] = useState('');
+  const [tab, setTab] = useState("export");
+  const [importText, setImportText] = useState("");
+  const [message, setMessage] = useState("");
 
   const jsonContent = exportToJson();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(jsonContent).then(() => {
-      setMessage('Copied to clipboard!');
-      setTimeout(() => setMessage(''), 2000);
+      setMessage("Copied to clipboard!");
+      setTimeout(() => setMessage(""), 2000);
     });
   };
 
   const handleDownload = () => {
-    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const blob = new Blob([jsonContent], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'flow.json';
+    a.download = "flow.json";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -30,8 +30,11 @@ export default function JsonImportExportModal({ onClose }) {
   const handleImport = () => {
     const result = importFromJson(importText);
     if (result.success) {
-      setMessage('Import successful!');
-      setTimeout(() => { setMessage(''); onClose(); }, 1000);
+      setMessage("Import successful!");
+      setTimeout(() => {
+        setMessage("");
+        onClose();
+      }, 1000);
     } else {
       setMessage(`Error: ${result.error}`);
     }
@@ -41,7 +44,7 @@ export default function JsonImportExportModal({ onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (evt) => setImportText(evt.target.result || '');
+    reader.onload = (evt) => setImportText(evt.target.result || "");
     reader.readAsText(file);
   };
 
@@ -50,40 +53,35 @@ export default function JsonImportExportModal({ onClose }) {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>JSON IMPORT / EXPORT</h2>
-          <button className="modal-close" onClick={onClose}>X</button>
+          <button className="modal-close" onClick={onClose}>
+            X
+          </button>
         </div>
 
         <div className="modal-tabs">
-          <button
-            className={`modal-tab ${tab === 'export' ? 'active' : ''}`}
-            onClick={() => setTab('export')}
-          >
+          <button className={`modal-tab ${tab === "export" ? "active" : ""}`} onClick={() => setTab("export")}>
             Export
           </button>
-          <button
-            className={`modal-tab ${tab === 'import' ? 'active' : ''}`}
-            onClick={() => setTab('import')}
-          >
+          <button className={`modal-tab ${tab === "import" ? "active" : ""}`} onClick={() => setTab("import")}>
             Import
           </button>
         </div>
 
-        {tab === 'export' && (
+        {tab === "export" && (
           <div className="modal-body">
-            <textarea
-              className="json-textarea"
-              readOnly
-              value={jsonContent}
-              rows={15}
-            />
+            <textarea className="json-textarea" readOnly value={jsonContent} rows={15} />
             <div className="modal-actions">
-              <button className="btn btn-primary" onClick={handleCopy}>COPY</button>
-              <button className="btn btn-secondary" onClick={handleDownload}>DOWNLOAD</button>
+              <button className="btn btn-primary" onClick={handleCopy}>
+                COPY
+              </button>
+              <button className="btn btn-secondary" onClick={handleDownload}>
+                DOWNLOAD
+              </button>
             </div>
           </div>
         )}
 
-        {tab === 'import' && (
+        {tab === "import" && (
           <div className="modal-body">
             <div className="import-file-row">
               <label className="btn btn-secondary">
@@ -100,11 +98,7 @@ export default function JsonImportExportModal({ onClose }) {
               rows={12}
             />
             <div className="modal-actions">
-              <button
-                className="btn btn-primary"
-                onClick={handleImport}
-                disabled={!importText.trim()}
-              >
+              <button className="btn btn-primary" onClick={handleImport} disabled={!importText.trim()}>
                 IMPORT
               </button>
             </div>

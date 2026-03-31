@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
-import { useFlowStore } from '../../store/flowStore';
+import { useState, useEffect } from "react";
+import { useFlowStore } from "../../store/flowStore";
 import {
   getSolutions,
   saveSolution,
   deleteSolution,
   updateSolutionNotes,
   clearAllSolutions,
-} from '../../utils/solutionStorage';
+} from "../../utils/solutionStorage";
 
 export default function SolutionsPanel() {
   const [solutions, setSolutions] = useState([]);
-  const [saveName, setSaveName] = useState('');
-  const [saveNotes, setSaveNotes] = useState('');
+  const [saveName, setSaveName] = useState("");
+  const [saveNotes, setSaveNotes] = useState("");
   const [editingId, setEditingId] = useState(null);
-  const [editNotes, setEditNotes] = useState('');
+  const [editNotes, setEditNotes] = useState("");
 
   const exportToJson = useFlowStore((s) => s.exportToJson);
   const importFromJson = useFlowStore((s) => s.importFromJson);
@@ -31,8 +31,8 @@ export default function SolutionsPanel() {
       flow,
       challengeId: activeChallenge?.id || null,
     });
-    setSaveName('');
-    setSaveNotes('');
+    setSaveName("");
+    setSaveNotes("");
     refresh();
   };
 
@@ -59,7 +59,7 @@ export default function SolutionsPanel() {
     if (editingId) {
       updateSolutionNotes(editingId, editNotes);
       setEditingId(null);
-      setEditNotes('');
+      setEditNotes("");
       refresh();
     }
   };
@@ -82,7 +82,9 @@ export default function SolutionsPanel() {
           value={saveNotes}
           onChange={(e) => setSaveNotes(e.target.value)}
         />
-        <button className="toolbar-btn" onClick={handleSave}>SAVE CURRENT</button>
+        <button className="toolbar-btn" onClick={handleSave}>
+          SAVE CURRENT
+        </button>
       </div>
 
       {solutions.length > 0 && (
@@ -92,13 +94,9 @@ export default function SolutionsPanel() {
               <div key={sol.id} className="solution-item">
                 <div className="solution-header">
                   <span className="solution-name">{sol.name}</span>
-                  <span className="solution-date">
-                    {new Date(sol.createdAt).toLocaleDateString()}
-                  </span>
+                  <span className="solution-date">{new Date(sol.createdAt).toLocaleDateString()}</span>
                 </div>
-                {sol.challengeId && (
-                  <div className="solution-challenge">Challenge: {sol.challengeId}</div>
-                )}
+                {sol.challengeId && <div className="solution-challenge">Challenge: {sol.challengeId}</div>}
                 {editingId === sol.id ? (
                   <div className="edit-notes">
                     <textarea
@@ -107,27 +105,37 @@ export default function SolutionsPanel() {
                       value={editNotes}
                       onChange={(e) => setEditNotes(e.target.value)}
                     />
-                    <button className="toolbar-btn" onClick={handleSaveNotes}>OK</button>
-                    <button className="toolbar-btn" onClick={() => setEditingId(null)}>CANCEL</button>
+                    <button className="toolbar-btn" onClick={handleSaveNotes}>
+                      OK
+                    </button>
+                    <button className="toolbar-btn" onClick={() => setEditingId(null)}>
+                      CANCEL
+                    </button>
                   </div>
                 ) : (
                   sol.notes && <div className="solution-notes">{sol.notes}</div>
                 )}
                 <div className="solution-actions">
-                  <button className="toolbar-btn" onClick={() => handleLoad(sol)}>LOAD</button>
-                  <button className="toolbar-btn" onClick={() => handleEditNotes(sol)}>NOTES</button>
-                  <button className="toolbar-btn" onClick={() => handleDelete(sol.id)}>DEL</button>
+                  <button className="toolbar-btn" onClick={() => handleLoad(sol)}>
+                    LOAD
+                  </button>
+                  <button className="toolbar-btn" onClick={() => handleEditNotes(sol)}>
+                    NOTES
+                  </button>
+                  <button className="toolbar-btn" onClick={() => handleDelete(sol.id)}>
+                    DEL
+                  </button>
                 </div>
               </div>
             ))}
           </div>
-          <button className="toolbar-btn clear-btn" onClick={handleClearAll}>CLEAR ALL</button>
+          <button className="toolbar-btn clear-btn" onClick={handleClearAll}>
+            CLEAR ALL
+          </button>
         </>
       )}
 
-      {solutions.length === 0 && (
-        <div className="empty-state">No saved solutions</div>
-      )}
+      {solutions.length === 0 && <div className="empty-state">No saved solutions</div>}
     </div>
   );
 }

@@ -47,15 +47,17 @@ export default function LoopNode({ id, data, selected }) {
         </select>
         <ArrayRow id={id} data={data} updateNodeData={updateNodeData} />
         <div className="node-row">
-          <label>{data.loopOp === 'filter' ? 'Predicate:' : data.loopOp === 'map' ? 'Transform:' : 'Effect:'}</label>
+          <label>{data.loopOp === "filter" ? "Predicate:" : data.loopOp === "map" ? "Transform:" : "Effect:"}</label>
           <input
             className="node-input small"
-            value={data.transform || ''}
+            value={data.transform || ""}
             onChange={(e) => updateNodeData(id, { transform: e.target.value })}
             placeholder={
-              data.loopOp === 'map' ? '(item) => item * 2'
-              : data.loopOp === 'filter' ? '(item) => item > 0'
-              : '(item) => item * 2'
+              data.loopOp === "map"
+                ? "(item) => item * 2"
+                : data.loopOp === "filter"
+                  ? "(item) => item > 0"
+                  : "(item) => item * 2"
             }
           />
         </div>

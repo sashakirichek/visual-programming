@@ -1,5 +1,5 @@
-import { useFlowStore } from '../../store/flowStore';
-import { EXAMPLES } from '../../data/examples';
+import { useFlowStore } from "../../store/flowStore";
+import { EXAMPLES } from "../../data/examples";
 
 export default function ExamplesPanel() {
   const importFromJson = useFlowStore((s) => s.importFromJson);
@@ -18,7 +18,9 @@ export default function ExamplesPanel() {
             <span className={`difficulty-badge ${ex.difficulty}`}>{ex.difficulty}</span>
             <div className="example-tags">
               {ex.tags.map((t) => (
-                <span key={t} className="example-tag">{t}</span>
+                <span key={t} className="example-tag">
+                  {t}
+                </span>
               ))}
             </div>
           </div>

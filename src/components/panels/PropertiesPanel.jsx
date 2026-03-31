@@ -1,4 +1,4 @@
-import { useFlowStore } from '../../store/flowStore';
+import { useFlowStore } from "../../store/flowStore";
 
 export default function PropertiesPanel() {
   const selectedNode = useFlowStore((s) => s.selectedNode);
@@ -44,7 +44,7 @@ export default function PropertiesPanel() {
           <label>{key}</label>
           <input
             className="prop-input"
-            value={String(value || '')}
+            value={String(value || "")}
             onChange={(e) => updateNodeData(node.id, { [key]: e.target.value })}
           />
         </div>
@@ -54,20 +54,13 @@ export default function PropertiesPanel() {
         <>
           <div className="prop-section-title">Result</div>
           <div className="prop-result">
-            <pre>
-              {typeof result === 'object'
-                ? JSON.stringify(result, null, 2)
-                : String(result)}
-            </pre>
+            <pre>{typeof result === "object" ? JSON.stringify(result, null, 2) : String(result)}</pre>
           </div>
         </>
       )}
 
       <div className="prop-actions">
-        <button
-          className="btn btn-danger"
-          onClick={() => deleteNode(node.id)}
-        >
+        <button className="btn btn-danger" onClick={() => deleteNode(node.id)}>
           DEL NODE
         </button>
       </div>

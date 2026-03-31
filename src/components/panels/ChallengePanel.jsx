@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { useFlowStore } from '../../store/flowStore';
-import { executeGraph } from '../../utils/nodeExecutor';
-import { CHALLENGES } from '../../data/challenges';
+import { useState } from "react";
+import { useFlowStore } from "../../store/flowStore";
+import { executeGraph } from "../../utils/nodeExecutor";
+import { CHALLENGES } from "../../data/challenges";
 
 function deepEqual(a, b) {
   if (a === b) return true;
   if (typeof a !== typeof b) return false;
-  if (typeof a !== 'object' || a === null || b === null) return false;
+  if (typeof a !== "object" || a === null || b === null) return false;
   const keysA = Object.keys(a);
   const keysB = Object.keys(b);
   if (keysA.length !== keysB.length) return false;
@@ -35,11 +35,11 @@ function validateStructure(nodes, edges, challenge) {
   }
 
   // Output must be connected
-  const outputNode = nodes.find((n) => n.id === 'challenge_output');
+  const outputNode = nodes.find((n) => n.id === "challenge_output");
   if (outputNode) {
     const hasIncoming = edges.some((e) => e.target === outputNode.id);
     if (!hasIncoming) {
-      errors.push('Output node is not connected');
+      errors.push("Output node is not connected");
     }
   }
 
@@ -48,8 +48,8 @@ function validateStructure(nodes, edges, challenge) {
 
 function runTestCase(nodes, edges, testCase) {
   const testNodes = nodes.map((n) => {
-    if (n.id.startsWith('challenge_input_')) {
-      const idx = parseInt(n.id.split('_')[2], 10);
+    if (n.id.startsWith("challenge_input_")) {
+      const idx = parseInt(n.id.split("_")[2], 10);
       return {
         ...n,
         data: { ...n.data, value: testCase.inputs[idx] ?? n.data.value },
@@ -59,9 +59,8 @@ function runTestCase(nodes, edges, testCase) {
   });
 
   const { results } = executeGraph(testNodes, edges);
-  const outputResult = results['challenge_output'];
-  const passed = deepEqual(outputResult, testCase.expected)
-    || String(outputResult) === String(testCase.expected);
+  const outputResult = results["challenge_output"];
+  const passed = deepEqual(outputResult, testCase.expected) || String(outputResult) === String(testCase.expected);
   return { output: outputResult, expected: testCase.expected, passed };
 }
 
@@ -83,9 +82,7 @@ export default function ChallengePanel() {
       return;
     }
 
-    const testResults = (activeChallenge.testCases || []).map((tc) =>
-      runTestCase(nodes, edges, tc)
-    );
+    const testResults = (activeChallenge.testCases || []).map((tc) => runTestCase(nodes, edges, tc));
     const allPassed = testResults.every((r) => r.passed);
     setChallengeResults({ passed: allPassed, structErrors: [], testResults });
   };
@@ -102,21 +99,19 @@ export default function ChallengePanel() {
           <p className="challenge-desc">{activeChallenge.description}</p>
 
           <div className="challenge-constraints">
-            {activeChallenge.maxNodes && (
-              <div>Max nodes: {activeChallenge.maxNodes}</div>
-            )}
+            {activeChallenge.maxNodes && <div>Max nodes: {activeChallenge.maxNodes}</div>}
             {activeChallenge.requiredNodeTypes?.length > 0 && (
-              <div>Required: {activeChallenge.requiredNodeTypes.join(', ')}</div>
+              <div>Required: {activeChallenge.requiredNodeTypes.join(", ")}</div>
             )}
             {activeChallenge.forbiddenNodeTypes?.length > 0 && (
-              <div>Forbidden: {activeChallenge.forbiddenNodeTypes.join(', ')}</div>
+              <div>Forbidden: {activeChallenge.forbiddenNodeTypes.join(", ")}</div>
             )}
           </div>
 
           {activeChallenge.hints?.length > 0 && (
             <div style={{ marginTop: 8 }}>
               <button className="toolbar-btn" onClick={() => setShowHints((h) => !h)}>
-                {showHints ? 'HIDE HINTS' : 'SHOW HINTS'}
+                {showHints ? "HIDE HINTS" : "SHOW HINTS"}
               </button>
               {showHints && (
                 <ul className="hint-list">
@@ -129,8 +124,12 @@ export default function ChallengePanel() {
           )}
 
           <div className="challenge-actions">
-            <button className="toolbar-btn" onClick={handleSubmit}>SUBMIT</button>
-            <button className="toolbar-btn" onClick={exitChallenge}>EXIT</button>
+            <button className="toolbar-btn" onClick={handleSubmit}>
+              SUBMIT
+            </button>
+            <button className="toolbar-btn" onClick={exitChallenge}>
+              EXIT
+            </button>
           </div>
 
           {challengeResults && (
@@ -139,18 +138,19 @@ export default function ChallengePanel() {
                 <div className="struct-errors">
                   <div className="result-label">STRUCTURE ERRORS:</div>
                   {challengeResults.structErrors.map((e, i) => (
-                    <div key={i} className="test-result-item fail">- {e}</div>
+                    <div key={i} className="test-result-item fail">
+                      - {e}
+                    </div>
                   ))}
                 </div>
               )}
               {challengeResults.testResults?.length > 0 && (
                 <>
-                  <div className="result-label">
-                    TEST RESULTS: {challengeResults.passed ? 'ALL PASSED' : 'FAILED'}
-                  </div>
+                  <div className="result-label">TEST RESULTS: {challengeResults.passed ? "ALL PASSED" : "FAILED"}</div>
                   {challengeResults.testResults.map((r, i) => (
-                    <div key={i} className={`test-result-item ${r.passed ? 'pass' : 'fail'}`}>
-                      #{i + 1}: expected {JSON.stringify(r.expected)}, got {JSON.stringify(r.output)} — {r.passed ? 'PASS' : 'FAIL'}
+                    <div key={i} className={`test-result-item ${r.passed ? "pass" : "fail"}`}>
+                      #{i + 1}: expected {JSON.stringify(r.expected)}, got {JSON.stringify(r.output)} —{" "}
+                      {r.passed ? "PASS" : "FAIL"}
                     </div>
                   ))}
                 </>
@@ -170,9 +170,7 @@ export default function ChallengePanel() {
           <div key={ch.id} className="challenge-item">
             <div className="challenge-item-header">
               <span className="challenge-title">{ch.title}</span>
-              <span className={`difficulty-badge ${ch.difficulty}`}>
-                {ch.difficulty.toUpperCase()}
-              </span>
+              <span className={`difficulty-badge ${ch.difficulty}`}>{ch.difficulty.toUpperCase()}</span>
             </div>
             <p className="challenge-desc">{ch.description}</p>
             <button className="toolbar-btn" onClick={() => startChallenge(ch)}>
