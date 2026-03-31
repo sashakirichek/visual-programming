@@ -134,7 +134,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
       <div className="toolbar">
         <div className="toolbar-brand">
           <span className="brand-icon">&#9670;</span>
-          <span className="brand-name">Visual Programmer</span>
+          <span className="brand-name">Visual Programming</span>
         </div>
 
         <div className="toolbar-actions">

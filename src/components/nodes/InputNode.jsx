@@ -7,23 +7,18 @@ export default function InputNode({ id, data, selected }) {
   const result = executionResults[id];
 
   return (
-    <div className={`node input-node ${selected ? "selected" : ""}`}>
+    <div className={`node input-node node-oneliner ${selected ? "selected" : ""}`}>
       <div className="node-header">
         INPUT
+        <input
+          className="node-input"
+          value={data.value || ""}
+          onChange={(e) => updateNodeData(id, { value: e.target.value })}
+          placeholder="value"
+        />
         <Handle type="source" position={Position.Right} id="value" style={{ top: "50%" }} />
       </div>
-      <div className="node-body">
-        <div className="node-row">
-          <label>Value:</label>
-          <input
-            className="node-input small"
-            value={data.value || ""}
-            onChange={(e) => updateNodeData(id, { value: e.target.value })}
-            placeholder="Enter value..."
-          />
-        </div>
-        {result !== undefined && <div className="node-result">{JSON.stringify(result)}</div>}
-      </div>
+      {result !== undefined && <div className="node-result">{JSON.stringify(result)}</div>}
     </div>
   );
 }

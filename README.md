@@ -1,8 +1,8 @@
-# Visual Programmer
+# Visual Programming
 
 A node-based visual programming environment built with React, [@xyflow/react](https://reactflow.dev), and TanStack.
 
-![Visual Programmer UI](https://github.com/user-attachments/assets/326a23b5-f071-492a-8915-097dbaa9b803)
+![Visual Programming UI](https://github.com/user-attachments/assets/326a23b5-f071-492a-8915-097dbaa9b803)
 
 ## Features
 
@@ -15,16 +15,16 @@ A node-based visual programming environment built with React, [@xyflow/react](ht
 
 ## Node Types
 
-| Node | Description |
-|------|-------------|
-| 📥 Input | Static value input (string, number, boolean, JSON) |
-| 📤 Output | Display the result of connected nodes |
-| 📦 Variable | Named variable that holds a value |
-| ⚙️ Operator | Binary math/logic operator |
-| ƒ Function | Built-in JS function (Math, String, Array, Object, JSON) |
-| 🔀 Condition | If/else branch based on a condition |
-| 🔄 Loop | Array iteration (forEach, map, filter) |
-| 📄 JSON | JSON parse/stringify/get/set operations |
+| Node         | Description                                              |
+| ------------ | -------------------------------------------------------- |
+| 📥 Input     | Static value input (string, number, boolean, JSON)       |
+| 📤 Output    | Display the result of connected nodes                    |
+| 📦 Variable  | Named variable that holds a value                        |
+| ⚙️ Operator  | Binary math/logic operator                               |
+| ƒ Function   | Built-in JS function (Math, String, Array, Object, JSON) |
+| 🔀 Condition | If/else branch based on a condition                      |
+| 🔄 Loop      | Array iteration (forEach, map, filter)                   |
+| 📄 JSON      | JSON parse/stringify/get/set operations                  |
 
 ## Getting Started
 
@@ -50,6 +50,7 @@ pnpm build
 ## GitHub Actions: Coding Agent
 
 To instruct the AI coding agent to fix an issue:
+
 1. Create a GitHub issue describing the bug or feature request
 2. Add the `approved-for-fix` label (only repository owners/maintainers can do this)
 3. The coding agent workflow will automatically trigger and open a pull request with the fix

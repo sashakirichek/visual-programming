@@ -8,7 +8,7 @@ function ParamRow({ id, index, param, data, updateNodeData }) {
 
   return (
     <div className="node-row" style={{ position: "relative" }}>
-      <Handle type="target" position={Position.Left} id={`arg${index}`} style={{ top: "50%", marginLeft: "-11px" }} />
+      <Handle type="target" position={Position.Left} id={`arg${index}`} style={{ top: "50%", marginLeft: "-10px" }} />
       <span className="handle-label">{param.name}</span>
       {!connected && (
         <input

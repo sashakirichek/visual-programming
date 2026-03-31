@@ -168,14 +168,6 @@ export const useFlowStore = create((set, get) => ({
 
   setChallengeResults: (results) => set({ challengeResults: results }),
 
-  // Scope system
-  setScopeParent: (nodeId, scopeId) =>
-    set((state) => ({
-      nodes: state.nodes.map((n) =>
-        n.id === nodeId ? { ...n, parentId: scopeId, extent: scopeId ? "parent" : undefined } : n,
-      ),
-    })),
-
   // Module system
   saveModule: (name, moduleData) =>
     set((state) => ({

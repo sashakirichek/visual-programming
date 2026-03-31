@@ -1,16 +1,16 @@
 import { useFlowStore } from "../../store/flowStore";
 
 const NODE_TYPES = [
-  { type: "inputNode", label: "IN  Input", color: "#888", description: "Static value input" },
-  { type: "outputNode", label: "OUT  Output", color: "#666", description: "Display result" },
-  { type: "variableNode", label: "VAR  Variable", color: "#999", description: "Named variable" },
-  { type: "operatorNode", label: "OP  Operator", color: "#aaa", description: "Math/logic operator" },
-  { type: "functionNode", label: "FN  Function", color: "#777", description: "Built-in function" },
-  { type: "conditionNode", label: "IF  Condition", color: "#bbb", description: "If/else branch" },
-  { type: "loopNode", label: "LP  Loop", color: "#555", description: "Array iteration" },
-  { type: "jsonNode", label: "JS  JSON", color: "#444", description: "JSON operations" },
-  { type: "apiNode", label: "API  API Query", color: "#555", description: "Fetch from external API" },
-  { type: "scopeNode", label: "SC  Scope", color: "#fff", description: "Function scope region" },
+  { type: "inputNode", label: "IN  Input", color: "var(--sys-blue)", description: "Static value input" },
+  { type: "outputNode", label: "OUT  Output", color: "var(--sys-purple)", description: "Display result" },
+  { type: "variableNode", label: "VAR  Variable", color: "var(--sys-teal)", description: "Named variable" },
+  { type: "operatorNode", label: "OP  Operator", color: "var(--sys-orange)", description: "Math/logic operator" },
+  { type: "functionNode", label: "FN  Function", color: "var(--sys-green)", description: "Built-in function" },
+  { type: "conditionNode", label: "IF  Condition", color: "var(--sys-yellow)", description: "If/else branch" },
+  { type: "loopNode", label: "LP  Loop", color: "var(--sys-indigo)", description: "Array iteration" },
+  { type: "jsonNode", label: "JS  JSON", color: "var(--sys-pink)", description: "JSON operations" },
+  { type: "apiNode", label: "API  API Query", color: "var(--sys-red)", description: "Fetch from external API" },
+  { type: "scopeNode", label: "GRP  Group", color: "var(--sys-gray)", description: "Visual group / save as module" },
 ];
 
 let nodeCounter = 0;
@@ -30,7 +30,9 @@ export default function NodePalette({ modules }) {
     };
     if (type === "scopeNode") {
       nodeData.style = { width: 400, height: 250 };
-      nodeData.data = { label: type, name: "", scopeType: "function", depth: 1 };
+      nodeData.zIndex = -1;
+      nodeData.dragHandle = ".drag-handle";
+      nodeData.data = { label: type, name: "", color: "var(--sys-gray)" };
     }
     addNode(nodeData);
   };

@@ -208,7 +208,7 @@ function OutputParamRow({ id, param, data, updateNodeData }) {
 
   return (
     <div className="node-row" style={{ position: "relative" }}>
-      <Handle type="target" position={Position.Left} id={param.id} style={{ top: "50%", marginLeft: "-11px" }} />
+      <Handle type="target" position={Position.Left} id={param.id} style={{ top: "50%", marginLeft: "-10px" }} />
       <span className="handle-label">{param.label}</span>
       {!connected &&
         (param.type === "color" ? (

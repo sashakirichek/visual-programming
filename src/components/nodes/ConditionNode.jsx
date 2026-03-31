@@ -6,7 +6,7 @@ function CondRow({ id, handleId, label, dataKey, data, updateNodeData, placehold
   const connected = connections.length > 0;
   return (
     <div className="node-row" style={{ position: "relative" }}>
-      <Handle type="target" position={Position.Left} id={handleId} style={{ top: "50%", marginLeft: "-11px" }} />
+      <Handle type="target" position={Position.Left} id={handleId} style={{ top: "50%", marginLeft: "-10px" }} />
       <span className="handle-label">{label}</span>
       {!connected && (
         <input

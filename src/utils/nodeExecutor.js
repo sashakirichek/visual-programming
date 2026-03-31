@@ -208,89 +208,28 @@ export async function executeGraph(nodes, edges) {
   const logs = [];
   const sortedIds = topologicalSort(nodes, edges);
 
-  // Build scope tree: scopeId -> { parent, variables }
-  const scopes = buildScopeTree(nodes);
-
   for (const nodeId of sortedIds) {
     const node = nodes.find((n) => n.id === nodeId);
     if (!node) continue;
 
-    // Skip scope nodes themselves (they're containers, not executors)
-    if (node.type === "scopeNode") {
-      results[nodeId] = `Scope: ${node.data?.name || "unnamed"}`;
-      steps.push({ nodeId, result: results[nodeId], nodeLabel: node.data?.name || "Scope" });
-      continue;
-    }
+    // Skip group nodes (visual only)
+    if (node.type === "scopeNode") continue;
 
     let result;
     try {
-      result = await executeNode(node, nodes, edges, results, scopes, logs);
+      result = await executeNode(node, nodes, edges, results, logs);
     } catch (e) {
       result = `Error: ${e.message}`;
     }
 
     results[nodeId] = result;
-
-    // If this is a variable node inside a scope, store in scope's variable map
-    if (node.type === "variableNode" && node.data?.name) {
-      const scopeId = findNodeScope(node, nodes);
-      if (scopeId && scopes[scopeId]) {
-        scopes[scopeId].variables[node.data.name] = result;
-      }
-    }
-
     steps.push({ nodeId, result, nodeLabel: node.data?.label || node.type });
   }
 
   return { results, steps, logs };
 }
 
-function buildScopeTree(nodes) {
-  const scopes = {};
-  const scopeNodes = nodes.filter((n) => n.type === "scopeNode");
-
-  for (const scope of scopeNodes) {
-    scopes[scope.id] = {
-      name: scope.data?.name || "",
-      type: scope.data?.scopeType || "function",
-      parentScope: null,
-      variables: {},
-    };
-  }
-
-  // Determine parent scopes based on parentId relationships
-  for (const scope of scopeNodes) {
-    if (scope.parentId && scopes[scope.parentId]) {
-      scopes[scope.id].parentScope = scope.parentId;
-    }
-  }
-
-  return scopes;
-}
-
-function findNodeScope(node, nodes) {
-  // Walk up parentId chain to find the containing scope
-  if (node.parentId) {
-    const parent = nodes.find((n) => n.id === node.parentId);
-    if (parent && parent.type === "scopeNode") return parent.id;
-    if (parent) return findNodeScope(parent, nodes);
-  }
-  return null;
-}
-
-function resolveVariableInScope(varName, scopeId, scopes) {
-  // Walk up scope chain (closure semantics)
-  let currentScope = scopeId;
-  while (currentScope) {
-    const scope = scopes[currentScope];
-    if (!scope) break;
-    if (varName in scope.variables) return scope.variables[varName];
-    currentScope = scope.parentScope;
-  }
-  return undefined;
-}
-
-async function executeNode(node, nodes, edges, results, scopes, logs) {
+async function executeNode(node, nodes, edges, results, logs) {
   const { type, data } = node;
 
   switch (type) {
@@ -306,14 +245,6 @@ async function executeNode(node, nodes, edges, results, scopes, logs) {
     case "variableNode": {
       const input = getIncomingValue(node.id, "value", nodes, edges, results);
       if (input !== undefined) return input;
-      // Try scope-based variable resolution
-      if (data.name && scopes) {
-        const scopeId = findNodeScope(node, nodes);
-        if (scopeId) {
-          const scopeVal = resolveVariableInScope(data.name, scopeId, scopes);
-          if (scopeVal !== undefined) return scopeVal;
-        }
-      }
       return parseValue(data.value);
     }
 
@@ -400,12 +331,6 @@ async function executeNode(node, nodes, edges, results, scopes, logs) {
               const v = results[n.id];
               return typeof v === "object" ? JSON.stringify(v) : String(v);
             }
-          }
-          // Fallback: try scope resolution
-          const scopeId = findNodeScope(node, nodes);
-          if (scopeId) {
-            const sv = resolveVariableInScope(trimmed, scopeId, scopes);
-            if (sv !== undefined) return typeof sv === "object" ? JSON.stringify(sv) : String(sv);
           }
           return "${" + trimmed + "}";
         });

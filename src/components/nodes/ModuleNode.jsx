@@ -14,7 +14,7 @@ export default function ModuleNode({ id, data, selected }) {
 
   return (
     <div className={`node module-node ${selected ? "selected" : ""}`}>
-      <Handle type="target" position={Position.Left} id="input" style={{ marginLeft: "-11px" }} />
+      <Handle type="target" position={Position.Left} id="input" style={{ marginLeft: "-10px" }} />
       <div className="node-header" style={{ cursor: "pointer" }} onClick={() => setExpanded(!expanded)}>
         MODULE
         <span style={{ marginLeft: "auto", fontSize: 9 }}>{expanded ? "▲" : "▼"}</span>

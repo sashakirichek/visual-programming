@@ -8,7 +8,7 @@ function JsonInputRow({ id, data, updateNodeData, op }) {
   const connected = connections.length > 0;
   return (
     <div className="node-row" style={{ position: "relative" }}>
-      <Handle type="target" position={Position.Left} id="value" style={{ top: "50%", marginLeft: "-11px" }} />
+      <Handle type="target" position={Position.Left} id="value" style={{ top: "50%", marginLeft: "-10px" }} />
       <span className="handle-label">In</span>
       {!connected && (
         <textarea

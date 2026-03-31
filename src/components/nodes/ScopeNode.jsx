@@ -1,57 +1,46 @@
-import { Handle, Position, NodeResizer } from "@xyflow/react";
+import { NodeResizer } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 
-const SCOPE_TYPES = ["function", "block", "closure"];
+const GROUP_COLORS = [
+  { label: "Gray", value: "var(--sys-gray)" },
+  { label: "Blue", value: "var(--sys-blue)" },
+  { label: "Green", value: "var(--sys-green)" },
+  { label: "Orange", value: "var(--sys-orange)" },
+  { label: "Purple", value: "var(--sys-purple)" },
+  { label: "Teal", value: "var(--sys-teal)" },
+];
 
 export default function ScopeNode({ id, data, selected }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
-
-  const depth = data.depth || 1;
-  const depthClass = `scope-depth-${Math.min(depth, 3)}`;
+  const color = data.color || "var(--sys-gray)";
 
   return (
-    <div className={`scope-node-container ${depthClass}`}>
+    <div className="group-node-container" style={{ borderColor: color }}>
       <NodeResizer
-        minWidth={300}
-        minHeight={200}
+        minWidth={160}
+        minHeight={80}
         isVisible={selected}
-        lineStyle={{ borderColor: "#555" }}
-        handleStyle={{ width: 8, height: 8, borderRadius: 0, background: "#555" }}
+        lineStyle={{ borderColor: color }}
+        handleStyle={{ width: 6, height: 6, borderRadius: 0, background: color }}
       />
-      <div className="scope-header">
-        <div className="scope-label">
-          <span>SCOPE:</span>
-          <input
-            className="node-input small"
-            value={data.name || ""}
-            onChange={(e) => updateNodeData(id, { name: e.target.value })}
-            placeholder="scope name"
-            style={{ background: "transparent", border: "none", color: "#aaa", width: "80px" }}
-          />
-        </div>
+      <div className="group-header drag-handle">
+        <span className="group-color-dot" style={{ background: color }} />
+        <input
+          className="group-name-input"
+          value={data.name || ""}
+          onChange={(e) => updateNodeData(id, { name: e.target.value })}
+          placeholder="label"
+        />
         <select
-          className="node-select"
-          value={data.scopeType || "function"}
-          onChange={(e) => updateNodeData(id, { scopeType: e.target.value })}
-          style={{
-            width: "auto",
-            background: "transparent",
-            border: "1px solid #444",
-            color: "#666",
-            fontSize: "9px",
-            padding: "1px 4px",
-          }}
+          className="group-color-select"
+          value={color}
+          onChange={(e) => updateNodeData(id, { color: e.target.value })}
         >
-          {SCOPE_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t.toUpperCase()}
-            </option>
+          {GROUP_COLORS.map((c) => (
+            <option key={c.value} value={c.value}>{c.label}</option>
           ))}
         </select>
-        <span className="scope-type-badge">{data.scopeType || "function"}</span>
       </div>
-      <Handle type="target" position={Position.Left} id="input" style={{ top: "50%" }} />
-      <Handle type="source" position={Position.Right} id="output" style={{ top: "50%" }} />
     </div>
   );
 }
