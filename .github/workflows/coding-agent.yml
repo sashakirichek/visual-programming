@@ -1,0 +1,75 @@
+name: Coding Agent
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  coding-agent:
+    name: Run AI Coding Agent
+    if: |
+      github.event.label.name == 'approved-for-fix' &&
+      (github.event.issue.user.login == github.repository_owner ||
+       contains(github.event.issue.labels.*.name, 'approved-for-fix'))
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check actor permissions
+        id: check-permission
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: collaborator } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.actor,
+            });
+            const level = collaborator.permission;
+            const isAllowed = ['admin', 'maintain', 'write'].includes(level);
+            console.log(`Actor: ${context.actor}, Permission: ${level}, Allowed: ${isAllowed}`);
+            if (!isAllowed) {
+              core.setFailed(`Actor ${context.actor} does not have write permissions.`);
+            }
+            core.setOutput('allowed', String(isAllowed));
+
+      - name: Checkout repository
+        if: steps.check-permission.outputs.allowed == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Copilot Coding Agent
+        if: steps.check-permission.outputs.allowed == 'true'
+        uses: github/copilot-coding-agent-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          issue_number: ${{ github.event.issue.number }}
+
+      - name: Comment on issue (success)
+        if: success() && steps.check-permission.outputs.allowed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ The AI coding agent has finished processing this issue. Please check the linked pull request for the proposed changes.`,
+            });
+
+      - name: Comment on issue (failure)
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `⚠️ The AI coding agent encountered an error while processing this issue. Please check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.`,
+            });
