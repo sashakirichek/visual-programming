@@ -1,24 +1,71 @@
-import { Handle, Position } from '@xyflow/react';
-import { useFlowStore } from '../../store/flowStore';
+import { useState } from "react";
+import { Handle, Position } from "@xyflow/react";
+import { useFlowStore } from "../../store/flowStore";
 
 export default function ModuleNode({ id, data, selected }) {
+  const updateNodeData = useFlowStore((s) => s.updateNodeData);
+  const modules = useFlowStore((s) => s.modules);
+  const loadModuleAsNodes = useFlowStore((s) => s.loadModuleAsNodes);
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
+  const [expanded, setExpanded] = useState(false);
+  const moduleNames = Object.keys(modules);
+  const selected_mod = modules[data.moduleName];
 
   return (
-    <div className={`node module-node ${selected ? 'selected' : ''}`}>
-      <Handle type="target" position={Position.Left} id="input" />
-      <div className="node-header">📦 Module</div>
+    <div className={`node module-node ${selected ? "selected" : ""}`}>
+      <Handle type="target" position={Position.Left} id="input" style={{ marginLeft: "-11px" }} />
+      <div className="node-header" style={{ cursor: "pointer" }} onClick={() => setExpanded(!expanded)}>
+        MODULE
+        <span style={{ marginLeft: "auto", fontSize: 9 }}>{expanded ? "▲" : "▼"}</span>
+        <Handle type="source" position={Position.Right} id="output" style={{ top: "50%" }} />
+      </div>
       <div className="node-body">
-        <div className="module-name">{data.moduleName || 'Unnamed Module'}</div>
-        {data.description && (
-          <div className="module-description">{data.description}</div>
+        <select
+          className="node-select"
+          value={data.moduleName || ""}
+          onChange={(e) => updateNodeData(id, { moduleName: e.target.value })}
+        >
+          <option value="">-- Pick module --</option>
+          {moduleNames.map((name) => (
+            <option key={name} value={name}>
+              {name}
+            </option>
+          ))}
+        </select>
+        {expanded && selected_mod && (
+          <div className="module-detail">
+            {selected_mod.description && <div className="module-detail-desc">{selected_mod.description}</div>}
+            <div className="module-detail-meta">
+              {selected_mod.nodes?.length || 0} nodes · {selected_mod.edges?.length || 0} edges
+            </div>
+            <div className="module-detail-nodes">
+              {(selected_mod.nodes || []).map((n, i) => (
+                <span key={i} className="module-detail-chip">
+                  {n.type?.replace("Node", "")}
+                </span>
+              ))}
+            </div>
+            <button
+              className="module-expand-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                loadModuleAsNodes(data.moduleName);
+              }}
+            >
+              EXPAND INTO GRAPH
+            </button>
+          </div>
+        )}
+        {!expanded && selected_mod && (
+          <div className="module-detail-meta">
+            {selected_mod.nodes?.length || 0}N · {selected_mod.edges?.length || 0}E
+          </div>
         )}
         {result !== undefined && (
-          <div className="node-result">{JSON.stringify(result)}</div>
+          <div className="node-result">{typeof result === "object" ? JSON.stringify(result) : String(result)}</div>
         )}
       </div>
-      <Handle type="source" position={Position.Right} id="output" />
     </div>
   );
 }

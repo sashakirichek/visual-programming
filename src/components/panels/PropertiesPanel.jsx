@@ -68,7 +68,7 @@ export default function PropertiesPanel() {
           className="btn btn-danger"
           onClick={() => deleteNode(node.id)}
         >
-          🗑 Delete Node
+          DEL NODE
         </button>
       </div>
     </div>

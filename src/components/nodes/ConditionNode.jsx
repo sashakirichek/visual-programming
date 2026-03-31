@@ -1,5 +1,24 @@
-import { Handle, Position } from '@xyflow/react';
-import { useFlowStore } from '../../store/flowStore';
+import { Handle, Position, useHandleConnections } from "@xyflow/react";
+import { useFlowStore } from "../../store/flowStore";
+
+function CondRow({ id, handleId, label, dataKey, data, updateNodeData, placeholder }) {
+  const connections = useHandleConnections({ type: "target", id: handleId });
+  const connected = connections.length > 0;
+  return (
+    <div className="node-row" style={{ position: "relative" }}>
+      <Handle type="target" position={Position.Left} id={handleId} style={{ top: "50%", marginLeft: "-11px" }} />
+      <span className="handle-label">{label}</span>
+      {!connected && (
+        <input
+          className="node-input small"
+          value={data[dataKey] || ""}
+          onChange={(e) => updateNodeData(id, { [dataKey]: e.target.value })}
+          placeholder={placeholder}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function ConditionNode({ id, data, selected }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
@@ -7,44 +26,41 @@ export default function ConditionNode({ id, data, selected }) {
   const result = executionResults[id];
 
   return (
-    <div className={`node condition-node ${selected ? 'selected' : ''}`}>
-      <Handle type="target" position={Position.Left} id="condition" style={{ top: '25%' }} />
-      <Handle type="target" position={Position.Left} id="true" style={{ top: '55%' }} />
-      <Handle type="target" position={Position.Left} id="false" style={{ top: '80%' }} />
-      <div className="node-header">🔀 Condition (if)</div>
-      <div className="node-body">
-        <div className="node-row">
-          <span className="handle-label">Cond</span>
-          <input
-            className="node-input small"
-            value={data.condition || ''}
-            onChange={(e) => updateNodeData(id, { condition: e.target.value })}
-            placeholder="or connect"
-          />
-        </div>
-        <div className="node-row">
-          <span className="handle-label">✓ True</span>
-          <input
-            className="node-input small"
-            value={data.trueValue || ''}
-            onChange={(e) => updateNodeData(id, { trueValue: e.target.value })}
-            placeholder="true value"
-          />
-        </div>
-        <div className="node-row">
-          <span className="handle-label">✗ False</span>
-          <input
-            className="node-input small"
-            value={data.falseValue || ''}
-            onChange={(e) => updateNodeData(id, { falseValue: e.target.value })}
-            placeholder="false value"
-          />
-        </div>
-        {result !== undefined && (
-          <div className="node-result">{JSON.stringify(result)}</div>
-        )}
+    <div className={`node condition-node ${selected ? "selected" : ""}`}>
+      <div className="node-header">
+        CONDITION
+        <Handle type="source" position={Position.Right} id="result" style={{ top: "50%" }} />
       </div>
-      <Handle type="source" position={Position.Right} id="result" />
+      <div className="node-body">
+        <CondRow
+          id={id}
+          handleId="condition"
+          label="Cond"
+          dataKey="condition"
+          data={data}
+          updateNodeData={updateNodeData}
+          placeholder="or connect"
+        />
+        <CondRow
+          id={id}
+          handleId="true"
+          label="T"
+          dataKey="trueValue"
+          data={data}
+          updateNodeData={updateNodeData}
+          placeholder="true value"
+        />
+        <CondRow
+          id={id}
+          handleId="false"
+          label="F"
+          dataKey="falseValue"
+          data={data}
+          updateNodeData={updateNodeData}
+          placeholder="false value"
+        />
+        {result !== undefined && <div className="node-result">{JSON.stringify(result)}</div>}
+      </div>
     </div>
   );
 }

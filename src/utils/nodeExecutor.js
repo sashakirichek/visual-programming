@@ -1,5 +1,6 @@
 /**
  * Node execution engine - evaluates node graph and produces results
+ * Supports scope-aware variable resolution with closure semantics
  */
 
 const OPERATORS = {
@@ -91,7 +92,7 @@ const ARRAY_FUNCTIONS = {
   concat: (a, b) => [...(a || []), ...(b || [])],
   flat: (arr, depth) => Array.isArray(arr) ? arr.flat(depth ?? 1) : [],
   flatMap: (arr, fn) => Array.isArray(arr) ? arr.flatMap(fn) : [],
-  sort: (arr) => [...(arr || [])].sort(),
+  sort: (arr, fn) => [...(arr || [])].sort(fn),
   reverse: (arr) => [...(arr || [])].reverse(),
   length: (arr) => (arr || []).length,
   Array_from: (v) => Array.from(v || []),
@@ -113,6 +114,21 @@ function parseValue(str) {
     return parsed;
   } catch {
     return str;
+  }
+}
+
+const CALLBACK_FUNCTIONS = new Set([
+  'map', 'filter', 'reduce', 'find', 'some', 'every', 'flatMap', 'sort',
+]);
+
+function parseLambda(str) {
+  if (!str || typeof str !== 'string') return null;
+  const trimmed = str.trim();
+  if (!trimmed) return null;
+  try {
+    return new Function(`"use strict"; return (${trimmed});`)();
+  } catch {
+    return null;
   }
 }
 
@@ -162,30 +178,95 @@ function topologicalSort(nodes, edges) {
   return sorted;
 }
 
-export function executeGraph(nodes, edges) {
+export async function executeGraph(nodes, edges) {
   const results = {};
   const steps = [];
+  const logs = [];
   const sortedIds = topologicalSort(nodes, edges);
+
+  // Build scope tree: scopeId -> { parent, variables }
+  const scopes = buildScopeTree(nodes);
 
   for (const nodeId of sortedIds) {
     const node = nodes.find((n) => n.id === nodeId);
     if (!node) continue;
 
+    // Skip scope nodes themselves (they're containers, not executors)
+    if (node.type === 'scopeNode') {
+      results[nodeId] = `Scope: ${node.data?.name || 'unnamed'}`;
+      steps.push({ nodeId, result: results[nodeId], nodeLabel: node.data?.name || 'Scope' });
+      continue;
+    }
+
     let result;
     try {
-      result = executeNode(node, nodes, edges, results);
+      result = await executeNode(node, nodes, edges, results, scopes, logs);
     } catch (e) {
       result = `Error: ${e.message}`;
     }
 
     results[nodeId] = result;
+
+    // If this is a variable node inside a scope, store in scope's variable map
+    if (node.type === 'variableNode' && node.data?.name) {
+      const scopeId = findNodeScope(node, nodes);
+      if (scopeId && scopes[scopeId]) {
+        scopes[scopeId].variables[node.data.name] = result;
+      }
+    }
+
     steps.push({ nodeId, result, nodeLabel: node.data?.label || node.type });
   }
 
-  return { results, steps };
+  return { results, steps, logs };
 }
 
-function executeNode(node, nodes, edges, results) {
+function buildScopeTree(nodes) {
+  const scopes = {};
+  const scopeNodes = nodes.filter((n) => n.type === 'scopeNode');
+
+  for (const scope of scopeNodes) {
+    scopes[scope.id] = {
+      name: scope.data?.name || '',
+      type: scope.data?.scopeType || 'function',
+      parentScope: null,
+      variables: {},
+    };
+  }
+
+  // Determine parent scopes based on parentId relationships
+  for (const scope of scopeNodes) {
+    if (scope.parentId && scopes[scope.parentId]) {
+      scopes[scope.id].parentScope = scope.parentId;
+    }
+  }
+
+  return scopes;
+}
+
+function findNodeScope(node, nodes) {
+  // Walk up parentId chain to find the containing scope
+  if (node.parentId) {
+    const parent = nodes.find((n) => n.id === node.parentId);
+    if (parent && parent.type === 'scopeNode') return parent.id;
+    if (parent) return findNodeScope(parent, nodes);
+  }
+  return null;
+}
+
+function resolveVariableInScope(varName, scopeId, scopes) {
+  // Walk up scope chain (closure semantics)
+  let currentScope = scopeId;
+  while (currentScope) {
+    const scope = scopes[currentScope];
+    if (!scope) break;
+    if (varName in scope.variables) return scope.variables[varName];
+    currentScope = scope.parentScope;
+  }
+  return undefined;
+}
+
+async function executeNode(node, nodes, edges, results, scopes, logs) {
   const { type, data } = node;
 
   switch (type) {
@@ -200,7 +281,16 @@ function executeNode(node, nodes, edges, results) {
 
     case 'variableNode': {
       const input = getIncomingValue(node.id, 'value', nodes, edges, results);
-      return input !== undefined ? input : parseValue(data.value);
+      if (input !== undefined) return input;
+      // Try scope-based variable resolution
+      if (data.name && scopes) {
+        const scopeId = findNodeScope(node, nodes);
+        if (scopeId) {
+          const scopeVal = resolveVariableInScope(data.name, scopeId, scopes);
+          if (scopeVal !== undefined) return scopeVal;
+        }
+      }
+      return parseValue(data.value);
     }
 
     case 'operatorNode': {
@@ -219,7 +309,14 @@ function executeNode(node, nodes, edges, results) {
       for (let i = 0; i < 4; i++) {
         const arg = getIncomingValue(node.id, `arg${i}`, nodes, edges, results);
         if (arg !== undefined) args.push(arg);
-        else if (data[`arg${i}`] !== undefined) args.push(parseValue(data[`arg${i}`]));
+        else if (data[`arg${i}`] !== undefined && data[`arg${i}`] !== '') {
+          // For callback-expecting functions, parse lambda from the callback arg position
+          if (CALLBACK_FUNCTIONS.has(fnName) && i === 1) {
+            const fn = parseLambda(data[`arg${i}`]);
+            if (fn) { args.push(fn); continue; }
+          }
+          args.push(parseValue(data[`arg${i}`]));
+        }
       }
 
       const allFns = { ...MATH_FUNCTIONS, ...STRING_FUNCTIONS, ...ARRAY_FUNCTIONS };
@@ -242,15 +339,47 @@ function executeNode(node, nodes, edges, results) {
       const inputArr = arr !== undefined ? arr : parseValue(data.array);
       if (!Array.isArray(inputArr)) return `Error: Expected array, got ${typeof inputArr}`;
       const op = data.loopOp || 'forEach';
-      if (op === 'forEach') return inputArr;
-      if (op === 'map') return inputArr.map((item) => item);
-      if (op === 'filter') return inputArr.filter(Boolean);
+      const fn = parseLambda(data.transform);
+      if (op === 'forEach') {
+        inputArr.forEach((item, i) => {
+          if (fn) {
+            const out = fn(item, i, inputArr);
+            if (out !== undefined) logs.push({ nodeId: node.id, value: out });
+          } else {
+            logs.push({ nodeId: node.id, value: item });
+          }
+        });
+        return inputArr;
+      }
+      if (op === 'map') return fn ? inputArr.map(fn) : inputArr.map((item) => item);
+      if (op === 'filter') return fn ? inputArr.filter(fn) : inputArr.filter(Boolean);
       return inputArr;
     }
 
     case 'jsonNode': {
       const input = getIncomingValue(node.id, 'value', nodes, edges, results);
       const op = data.jsonOp || 'parse';
+      if (op === 'template') {
+        let tpl = data.jsonValue || '{}';
+        tpl = tpl.replace(/\$\{([^}]+)\}/g, (_, varName) => {
+          const trimmed = varName.trim();
+          // Look up variable name from results of variableNode / inputNode
+          for (const n of nodes) {
+            if ((n.type === 'variableNode' || n.type === 'inputNode') && n.data?.name === trimmed && results[n.id] !== undefined) {
+              const v = results[n.id];
+              return typeof v === 'object' ? JSON.stringify(v) : String(v);
+            }
+          }
+          // Fallback: try scope resolution
+          const scopeId = findNodeScope(node, nodes);
+          if (scopeId) {
+            const sv = resolveVariableInScope(trimmed, scopeId, scopes);
+            if (sv !== undefined) return typeof sv === 'object' ? JSON.stringify(sv) : String(sv);
+          }
+          return '${' + trimmed + '}';
+        });
+        try { return JSON.parse(tpl); } catch (e) { return `Template Error: ${e.message}`; }
+      }
       if (op === 'parse') {
         const src = input !== undefined ? input : data.jsonValue || '{}';
         try { return JSON.parse(src); } catch (e) { return `JSON Error: ${e.message}`; }
@@ -284,6 +413,42 @@ function executeNode(node, nodes, edges, results) {
 
     case 'moduleNode': {
       return `Module: ${data.moduleName || 'unnamed'}`;
+    }
+
+    case 'apiNode': {
+      const method = (data.method || 'GET').toUpperCase();
+      const url = data.url || '';
+      if (!url) return 'Error: No URL provided';
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(url);
+      } catch {
+        return 'Error: Invalid URL';
+      }
+      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+        return 'Error: Only http/https URLs allowed';
+      }
+      const opts = { method };
+      if (data.headers) {
+        try { opts.headers = JSON.parse(data.headers); } catch { /* skip */ }
+      }
+      if ((method === 'POST' || method === 'PUT')) {
+        const bodyInput = getIncomingValue(node.id, 'body', nodes, edges, results);
+        const bodyStr = bodyInput !== undefined
+          ? (typeof bodyInput === 'object' ? JSON.stringify(bodyInput) : String(bodyInput))
+          : data.body || '';
+        if (bodyStr) {
+          opts.body = bodyStr;
+          opts.headers = { 'Content-Type': 'application/json', ...opts.headers };
+        }
+      }
+      try {
+        const res = await fetch(url, opts);
+        const text = await res.text();
+        try { return JSON.parse(text); } catch { return text; }
+      } catch (e) {
+        return `Error: ${e.message}`;
+      }
     }
 
     default:

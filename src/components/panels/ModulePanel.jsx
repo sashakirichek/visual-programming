@@ -28,7 +28,7 @@ export default function ModulePanel() {
 
   return (
     <div className="module-panel">
-      <div className="panel-title">📦 Modules</div>
+      <div className="panel-title">MODULES</div>
 
       <div className="module-save-form">
         <input
@@ -44,7 +44,7 @@ export default function ModulePanel() {
           placeholder="Description (optional)"
         />
         <button className="btn btn-primary" onClick={handleSave} disabled={!moduleName.trim()}>
-          💾 Save Current Flow as Module
+          SAVE FLOW AS MODULE
         </button>
       </div>
 
@@ -55,7 +55,7 @@ export default function ModulePanel() {
         {Object.entries(modules).map(([name, mod]) => (
           <div key={name} className="module-item">
             <div className="module-item-header" onClick={() => setExpanded(expanded === name ? null : name)}>
-              <span>📦 {name}</span>
+              <span>MOD: {name}</span>
               <span className="module-arrow">{expanded === name ? '▲' : '▼'}</span>
             </div>
             {expanded === name && (
@@ -70,13 +70,13 @@ export default function ModulePanel() {
                     className="btn btn-secondary"
                     onClick={() => loadModuleAsNodes(name)}
                   >
-                    📥 Load into Flow
+                    LOAD
                   </button>
                   <button
                     className="btn btn-danger"
                     onClick={() => deleteModule(name)}
                   >
-                    🗑 Delete
+                    DEL
                   </button>
                 </div>
               </div>

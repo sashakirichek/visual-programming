@@ -49,8 +49,8 @@ export default function JsonImportExportModal({ onClose }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>📄 JSON Import / Export</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <h2>JSON IMPORT / EXPORT</h2>
+          <button className="modal-close" onClick={onClose}>X</button>
         </div>
 
         <div className="modal-tabs">
@@ -77,8 +77,8 @@ export default function JsonImportExportModal({ onClose }) {
               rows={15}
             />
             <div className="modal-actions">
-              <button className="btn btn-primary" onClick={handleCopy}>📋 Copy</button>
-              <button className="btn btn-secondary" onClick={handleDownload}>⬇️ Download</button>
+              <button className="btn btn-primary" onClick={handleCopy}>COPY</button>
+              <button className="btn btn-secondary" onClick={handleDownload}>DOWNLOAD</button>
             </div>
           </div>
         )}
@@ -87,7 +87,7 @@ export default function JsonImportExportModal({ onClose }) {
           <div className="modal-body">
             <div className="import-file-row">
               <label className="btn btn-secondary">
-                📂 Choose File
+                CHOOSE FILE
                 <input type="file" accept=".json" onChange={handleFileImport} hidden />
               </label>
               <span className="import-or">or paste JSON below</span>
@@ -105,7 +105,7 @@ export default function JsonImportExportModal({ onClose }) {
                 onClick={handleImport}
                 disabled={!importText.trim()}
               >
-                📥 Import
+                IMPORT
               </button>
             </div>
           </div>

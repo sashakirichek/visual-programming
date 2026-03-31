@@ -1,14 +1,16 @@
 import { useFlowStore } from '../../store/flowStore';
 
 const NODE_TYPES = [
-  { type: 'inputNode', label: '📥 Input', color: '#4caf50', description: 'Static value input' },
-  { type: 'outputNode', label: '📤 Output', color: '#2196f3', description: 'Display result' },
-  { type: 'variableNode', label: '📦 Variable', color: '#9c27b0', description: 'Named variable' },
-  { type: 'operatorNode', label: '⚙️ Operator', color: '#ff9800', description: 'Math/logic operator' },
-  { type: 'functionNode', label: 'ƒ Function', color: '#e91e63', description: 'Built-in function' },
-  { type: 'conditionNode', label: '🔀 Condition', color: '#009688', description: 'If/else branch' },
-  { type: 'loopNode', label: '🔄 Loop', color: '#795548', description: 'Array iteration' },
-  { type: 'jsonNode', label: '📄 JSON', color: '#607d8b', description: 'JSON operations' },
+  { type: 'inputNode', label: 'IN  Input', color: '#888', description: 'Static value input' },
+  { type: 'outputNode', label: 'OUT  Output', color: '#666', description: 'Display result' },
+  { type: 'variableNode', label: 'VAR  Variable', color: '#999', description: 'Named variable' },
+  { type: 'operatorNode', label: 'OP  Operator', color: '#aaa', description: 'Math/logic operator' },
+  { type: 'functionNode', label: 'FN  Function', color: '#777', description: 'Built-in function' },
+  { type: 'conditionNode', label: 'IF  Condition', color: '#bbb', description: 'If/else branch' },
+  { type: 'loopNode', label: 'LP  Loop', color: '#555', description: 'Array iteration' },
+  { type: 'jsonNode', label: 'JS  JSON', color: '#444', description: 'JSON operations' },
+  { type: 'apiNode', label: 'API  API Query', color: '#555', description: 'Fetch from external API' },
+  { type: 'scopeNode', label: 'SC  Scope', color: '#fff', description: 'Function scope region' },
 ];
 
 let nodeCounter = 0;
@@ -20,12 +22,17 @@ export default function NodePalette({ modules }) {
   const handleAddNode = (type) => {
     nodeCounter++;
     const id = `${type}_${Date.now()}_${nodeCounter}`;
-    addNode({
+    const nodeData = {
       id,
       type,
       position: { x: 200 + Math.random() * 200, y: 100 + Math.random() * 200 },
       data: { label: type },
-    });
+    };
+    if (type === 'scopeNode') {
+      nodeData.style = { width: 400, height: 250 };
+      nodeData.data = { label: type, name: '', scopeType: 'function', depth: 1 };
+    }
+    addNode(nodeData);
   };
 
   const handleLoadModule = (moduleName) => {
@@ -40,7 +47,7 @@ export default function NodePalette({ modules }) {
           <div
             key={type}
             className="palette-item"
-            style={{ borderLeft: `4px solid ${color}` }}
+            style={{ borderLeftColor: color }}
             onClick={() => handleAddNode(type)}
             title={description}
           >
@@ -60,7 +67,7 @@ export default function NodePalette({ modules }) {
               onClick={() => handleLoadModule(name)}
               title={`Load module: ${name}`}
             >
-              <span className="palette-label">📦 {name}</span>
+              <span className="palette-label">MOD: {name}</span>
               <span className="palette-desc">Click to load</span>
             </div>
           ))}
