@@ -37,7 +37,9 @@ export default function ScopeNode({ id, data, selected }) {
           onChange={(e) => updateNodeData(id, { color: e.target.value })}
         >
           {GROUP_COLORS.map((c) => (
-            <option key={c.value} value={c.value}>{c.label}</option>
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
           ))}
         </select>
       </div>
