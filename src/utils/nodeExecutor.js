@@ -133,11 +133,17 @@ const ARRAY_FUNCTIONS = {
 
 const MAP_FUNCTIONS = {
   Map_new: () => new Map(),
-  Map_set: (map, key, value) => { map.set(key, value); return map; },
+  Map_set: (map, key, value) => {
+    map.set(key, value);
+    return map;
+  },
   Map_get: (map, key) => map.get(key),
   Map_has: (map, key) => map.has(key),
   Map_size: (map) => map.size,
-  Map_delete: (map, key) => { map.delete(key); return map; },
+  Map_delete: (map, key) => {
+    map.delete(key);
+    return map;
+  },
   Map_entries: (map) => [...map.entries()],
   Map_keys: (map) => [...map.keys()],
   Map_values: (map) => [...map.values()],
