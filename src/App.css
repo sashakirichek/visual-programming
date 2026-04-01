@@ -236,6 +236,13 @@ body {
   color: var(--sys-red);
   border-color: var(--sys-red);
 }
+.toolbar-btn.clear-all-btn {
+  color: var(--sys-red);
+}
+.toolbar-btn.clear-all-btn:hover:not(:disabled) {
+  border-color: rgba(255, 69, 58, 0.4);
+  background: rgba(255, 69, 58, 0.12);
+}
 .toolbar-btn.json-btn,
 .toolbar-btn.share-btn,
 .toolbar-btn.viz-btn {

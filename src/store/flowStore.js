@@ -3,6 +3,7 @@ import { addEdge, applyNodeChanges, applyEdgeChanges } from "@xyflow/react";
 
 const initialNodes = [];
 const initialEdges = [];
+const FLOW_STORAGE_KEY = "vp-flow-state";
 
 const VALID_NODE_TYPES = new Set([
   "inputNode",
@@ -48,18 +49,34 @@ function sanitizeNodes(nodes) {
   if (!Array.isArray(nodes)) return [];
   return nodes
     .filter((n) => n && typeof n.id === "string" && VALID_NODE_TYPES.has(n.type))
-    .map((n) => ({
-      id: sanitizeString(n.id),
-      type: n.type,
-      position: {
-        x: typeof n.position?.x === "number" ? n.position.x : 0,
-        y: typeof n.position?.y === "number" ? n.position.y : 0,
-      },
-      data: sanitizeValue(n.data || {}),
-      ...(n.parentId ? { parentId: sanitizeString(n.parentId) } : {}),
-      ...(n.extent ? { extent: n.extent } : {}),
-      ...(n.style ? { style: sanitizeValue(n.style) } : {}),
-    }));
+    .map((n) => {
+      const style = n.style ? sanitizeValue(n.style) : {};
+
+      if (typeof n.width === "number") {
+        style.width = n.width;
+      }
+
+      if (typeof n.height === "number") {
+        style.height = n.height;
+      }
+
+      return {
+        id: sanitizeString(n.id),
+        type: n.type,
+        position: {
+          x: typeof n.position?.x === "number" ? n.position.x : 0,
+          y: typeof n.position?.y === "number" ? n.position.y : 0,
+        },
+        data: sanitizeValue(n.data || {}),
+        ...(n.parentId ? { parentId: sanitizeString(n.parentId) } : {}),
+        ...(n.extent ? { extent: n.extent } : {}),
+        ...(typeof n.width === "number" ? { width: n.width } : {}),
+        ...(typeof n.height === "number" ? { height: n.height } : {}),
+        ...(typeof n.zIndex === "number" ? { zIndex: n.zIndex } : {}),
+        ...(typeof n.dragHandle === "string" ? { dragHandle: sanitizeString(n.dragHandle) } : {}),
+        ...(Object.keys(style).length > 0 ? { style } : {}),
+      };
+    });
 }
 
 function sanitizeEdges(edges) {
@@ -76,11 +93,70 @@ function sanitizeEdges(edges) {
     }));
 }
 
+function sanitizeModules(modules) {
+  if (!modules || typeof modules !== "object" || Array.isArray(modules)) return {};
+
+  return Object.fromEntries(
+    Object.entries(modules).flatMap(([name, mod]) => {
+      if (!mod || typeof mod !== "object") return [];
+
+      const safeName = sanitizeString(name);
+      return [[
+        safeName,
+        {
+          name: sanitizeString(mod.name || safeName),
+          description: sanitizeString(mod.description || ""),
+          nodes: sanitizeNodes(mod.nodes),
+          edges: sanitizeEdges(mod.edges),
+          ...(mod.createdAt ? { createdAt: sanitizeString(mod.createdAt) } : {}),
+        },
+      ]];
+    }),
+  );
+}
+
+function serializeGraphState(state) {
+  return {
+    nodes: sanitizeNodes(state?.nodes),
+    edges: sanitizeEdges(state?.edges),
+    modules: sanitizeModules(state?.modules),
+  };
+}
+
+function loadPersistedGraphState() {
+  if (typeof window === "undefined") {
+    return { nodes: initialNodes, edges: initialEdges, modules: {} };
+  }
+
+  try {
+    const raw = window.localStorage.getItem(FLOW_STORAGE_KEY);
+    if (!raw) {
+      return { nodes: initialNodes, edges: initialEdges, modules: {} };
+    }
+
+    return serializeGraphState(JSON.parse(raw));
+  } catch {
+    return { nodes: initialNodes, edges: initialEdges, modules: {} };
+  }
+}
+
+function persistGraphState(state) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(FLOW_STORAGE_KEY, JSON.stringify(serializeGraphState(state)));
+  } catch {
+    // Ignore storage failures so the editor remains usable.
+  }
+}
+
+const persistedGraphState = loadPersistedGraphState();
+
 export const useFlowStore = create((set, get) => ({
-  nodes: initialNodes,
-  edges: initialEdges,
+  nodes: persistedGraphState.nodes,
+  edges: persistedGraphState.edges,
   selectedNode: null,
-  modules: {},
+  modules: persistedGraphState.modules,
   executionResults: {},
   consoleLogs: [],
   debugMode: false,
@@ -127,6 +203,21 @@ export const useFlowStore = create((set, get) => ({
 
   clearResults: () => set({ executionResults: {}, consoleLogs: [] }),
 
+  clearFlow: () =>
+    set({
+      nodes: [],
+      edges: [],
+      selectedNode: null,
+      executionResults: {},
+      consoleLogs: [],
+      debugMode: false,
+      debugStep: 0,
+      debugSteps: [],
+      isRunning: false,
+      activeChallenge: null,
+      challengeResults: null,
+    }),
+
   // Viz editor state
   onVizNodesChange: (changes) => set((state) => ({ vizNodes: applyNodeChanges(changes, state.vizNodes) })),
 
@@ -170,9 +261,22 @@ export const useFlowStore = create((set, get) => ({
 
   // Module system
   saveModule: (name, moduleData) =>
-    set((state) => ({
-      modules: { ...state.modules, [name]: moduleData },
-    })),
+    set((state) => {
+      const safeName = sanitizeString(name);
+      const safeModule = sanitizeModules({
+        [safeName]: {
+          name: moduleData?.name || safeName,
+          description: moduleData?.description || "",
+          nodes: moduleData?.nodes,
+          edges: moduleData?.edges,
+          createdAt: moduleData?.createdAt || new Date().toISOString(),
+        },
+      })[safeName];
+
+      return {
+        modules: { ...state.modules, [safeName]: safeModule },
+      };
+    }),
 
   deleteModule: (name) =>
     set((state) => {
@@ -188,17 +292,19 @@ export const useFlowStore = create((set, get) => ({
     const offsetX = 100;
     const offsetY = 100;
     const prefix = `${moduleName}_${Date.now()}`;
-    const newNodes = mod.nodes.map((n) => ({
+    const moduleNodes = sanitizeNodes(mod.nodes);
+    const moduleEdges = sanitizeEdges(mod.edges);
+    const newNodes = moduleNodes.map((n) => ({
       ...n,
       id: `${prefix}_${n.id}`,
       position: { x: n.position.x + offsetX, y: n.position.y + offsetY },
       data: { ...n.data, moduleInstance: moduleName },
     }));
     const idMap = {};
-    mod.nodes.forEach((n) => {
+    moduleNodes.forEach((n) => {
       idMap[n.id] = `${prefix}_${n.id}`;
     });
-    const newEdges = mod.edges.map((e) => ({
+    const newEdges = moduleEdges.map((e) => ({
       ...e,
       id: `${prefix}_${e.id}`,
       source: idMap[e.source] || e.source,
@@ -212,20 +318,36 @@ export const useFlowStore = create((set, get) => ({
   },
 
   exportToJson: () => {
-    const { nodes, edges, modules } = get();
-    return JSON.stringify({ nodes, edges, modules }, null, 2);
+    return JSON.stringify(serializeGraphState(get()), null, 2);
   },
 
   importFromJson: (jsonString) => {
     try {
       const raw = JSON.parse(jsonString);
-      const nodes = sanitizeNodes(raw.nodes);
-      const edges = sanitizeEdges(raw.edges);
-      const modules = sanitizeValue(raw.modules || {});
-      set({ nodes, edges, modules });
+      const { nodes, edges, modules } = serializeGraphState(raw);
+      set({
+        nodes,
+        edges,
+        modules,
+        selectedNode: null,
+        executionResults: {},
+        consoleLogs: [],
+        debugMode: false,
+        debugStep: 0,
+        debugSteps: [],
+        isRunning: false,
+        activeChallenge: null,
+        challengeResults: null,
+      });
       return { success: true };
     } catch (e) {
       return { success: false, error: e.message };
     }
   },
 }));
+
+if (typeof window !== "undefined") {
+  useFlowStore.subscribe((state) => {
+    persistGraphState(state);
+  });
+}

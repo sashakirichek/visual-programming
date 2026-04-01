@@ -222,7 +222,7 @@ export const EXAMPLES = [
   },
   {
     id: "two-sum",
-    title: "Two Sum (LeetCode #1)",
+    title: "Two Sum",
     difficulty: "medium",
     description:
       "Find two indices in an array whose values sum to a target. Uses map() with closure bindings to access 'target' and a typed variable node that creates a shared new Map() for 'seen'.",

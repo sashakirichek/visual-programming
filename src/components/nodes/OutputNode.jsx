@@ -296,7 +296,7 @@ export default function OutputNode({ id, data, selected, width }) {
   const color = resolve("color", null);
 
   return (
-    <div className={`node output-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+    <div className={`node output-node ${selected ? "selected" : ""}`}>
       <Handle type="target" position={Position.Left} id="value" />
       <div className="node-header drag-handle">
         OUTPUT

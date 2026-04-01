@@ -15,6 +15,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
   const setIsRunning = useFlowStore((s) => s.setIsRunning);
   const setConsoleLogs = useFlowStore((s) => s.setConsoleLogs);
   const clearResults = useFlowStore((s) => s.clearResults);
+  const clearFlow = useFlowStore((s) => s.clearFlow);
   const exportToJson = useFlowStore((s) => s.exportToJson);
 
   const [showJson, setShowJson] = useState(false);
@@ -71,6 +72,16 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
     clearResults();
     setDebugMode(false);
   }, [clearResults, setDebugMode]);
+
+  const handleClearAll = useCallback(() => {
+    if (nodes.length === 0 && edges.length === 0) return;
+
+    const confirmed = window.confirm("Remove all nodes and edges? Saved modules will be kept.");
+    if (!confirmed) return;
+
+    clearFlow();
+    setRightPanel(null);
+  }, [nodes.length, edges.length, clearFlow, setRightPanel]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -212,6 +223,14 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
 
           <button className="toolbar-btn" onClick={handleClear} title="Clear results">
             CLR
+          </button>
+          <button
+            className="toolbar-btn clear-all-btn"
+            onClick={handleClearAll}
+            disabled={nodes.length === 0 && edges.length === 0}
+            title="Remove all nodes and edges"
+          >
+            Clear All
           </button>
 
           <div className="toolbar-separator" />
