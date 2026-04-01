@@ -1,5 +1,6 @@
 import { Handle, Position, useHandleConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
 const JSON_OPS = ["parse", "stringify", "get", "set", "template"];
 
@@ -23,17 +24,17 @@ function JsonInputRow({ id, data, updateNodeData, op }) {
   );
 }
 
-export default function JsonNode({ id, data, selected }) {
+export default function JsonNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
   const op = data.jsonOp || "parse";
 
   return (
-    <div className={`node json-node ${selected ? "selected" : ""}`}>
-      <div className="node-header">
+    <div className={`node json-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <div className="node-header drag-handle">
         JSON
-        <Handle type="source" position={Position.Right} id="result" style={{ top: "50%" }} />
+        <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />
       </div>
       <div className="node-body">
         <select className="node-select" value={op} onChange={(e) => updateNodeData(id, { jsonOp: e.target.value })}>
@@ -60,9 +61,7 @@ export default function JsonNode({ id, data, selected }) {
             placeholder="new value"
           />
         )}
-        {result !== undefined && (
-          <div className="node-result">{typeof result === "object" ? JSON.stringify(result) : String(result)}</div>
-        )}
+        {result !== undefined && <div className="node-result">{formatValue(result)}</div>}
       </div>
     </div>
   );

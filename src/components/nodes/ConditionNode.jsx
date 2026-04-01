@@ -1,5 +1,6 @@
 import { Handle, Position, useHandleConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
 function CondRow({ id, handleId, label, dataKey, data, updateNodeData, placeholder }) {
   const connections = useHandleConnections({ type: "target", id: handleId });
@@ -20,16 +21,16 @@ function CondRow({ id, handleId, label, dataKey, data, updateNodeData, placehold
   );
 }
 
-export default function ConditionNode({ id, data, selected }) {
+export default function ConditionNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
 
   return (
-    <div className={`node condition-node ${selected ? "selected" : ""}`}>
-      <div className="node-header">
+    <div className={`node condition-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <div className="node-header drag-handle">
         CONDITION
-        <Handle type="source" position={Position.Right} id="result" style={{ top: "50%" }} />
+        <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />
       </div>
       <div className="node-body">
         <CondRow
@@ -59,7 +60,7 @@ export default function ConditionNode({ id, data, selected }) {
           updateNodeData={updateNodeData}
           placeholder="false value"
         />
-        {result !== undefined && <div className="node-result">{JSON.stringify(result)}</div>}
+        {result !== undefined && <div className="node-result">{formatValue(result)}</div>}
       </div>
     </div>
   );

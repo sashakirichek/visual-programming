@@ -413,7 +413,7 @@ body {
 .node {
   min-width: 120px;
   width: fit-content;
-  max-width: 400px;
+  max-width: none;
   border-radius: var(--radius-md);
   border: 1px solid var(--node-border);
   background: var(--node-bg);
@@ -440,6 +440,16 @@ body {
   align-items: center;
   gap: 4px;
   position: relative;
+}
+
+.node-header.drag-handle,
+.group-header.drag-handle {
+  cursor: grab;
+}
+
+.node-header.drag-handle:active,
+.group-header.drag-handle:active {
+  cursor: grabbing;
 }
 
 .input-node {
@@ -509,6 +519,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .node-input {
@@ -529,6 +540,21 @@ body {
   width: auto;
   min-width: 80px;
   flex: 1;
+}
+
+.node-select.small {
+  width: auto;
+  min-width: 84px;
+  flex: 1;
+}
+
+.node-inline-select {
+  width: auto;
+  min-width: 78px;
+  max-width: 96px;
+  padding: 2px 4px;
+  font-size: 10px;
+  flex: 0 0 auto;
 }
 
 .node-select {
@@ -556,11 +582,31 @@ body {
   font-family: var(--font-mono);
 }
 
+.node-param-textarea {
+  min-height: 68px;
+}
+
 .node-row {
   display: flex;
   align-items: center;
   gap: 4px;
   position: relative;
+}
+
+.node-row-stack {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.node-row-stack .handle-label,
+.node-row-stack label {
+  min-width: 0;
+}
+
+.node-row-stack .node-textarea,
+.node-row-stack .node-input,
+.node-row-stack .node-select {
+  width: 100%;
 }
 .node-row label {
   font-size: 9px;
@@ -582,7 +628,56 @@ body {
   font-style: italic;
 }
 
+.closure-section {
+  border-top: 1px solid var(--separator-opaque);
+  margin-top: 4px;
+  padding-top: 3px;
+}
+
+.closure-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.node-action-btn {
+  padding: 2px 6px;
+  border: 1px solid var(--separator-opaque);
+  border-radius: var(--radius-sm);
+  background: var(--fill-quaternary);
+  color: var(--label-secondary);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.node-action-btn:hover {
+  background: var(--fill-tertiary);
+  color: var(--label-primary);
+}
+
+.node-action-btn.compact {
+  min-width: 22px;
+  padding: 2px 4px;
+  flex: 0 0 auto;
+}
+
+.node-resize-line {
+  border-width: 1px;
+}
+
+.node-resize-handle {
+  border: 1px solid var(--node-border);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
 .node-result {
+  overflow: hidden;
   margin-top: 2px;
   padding: 2px 5px;
   background: var(--input-bg);
@@ -617,7 +712,7 @@ body {
   border-collapse: collapse;
   font-size: 10px;
   margin-top: 4px;
-  max-height: 120px;
+  max-height: 800px;
   display: block;
   overflow-y: auto;
 }

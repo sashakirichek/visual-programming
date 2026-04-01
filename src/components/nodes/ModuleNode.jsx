@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Handle, Position } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
-export default function ModuleNode({ id, data, selected }) {
+export default function ModuleNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
   const modules = useFlowStore((s) => s.modules);
   const loadModuleAsNodes = useFlowStore((s) => s.loadModuleAsNodes);
@@ -13,12 +14,20 @@ export default function ModuleNode({ id, data, selected }) {
   const selected_mod = modules[data.moduleName];
 
   return (
-    <div className={`node module-node ${selected ? "selected" : ""}`}>
+    <div className={`node module-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
       <Handle type="target" position={Position.Left} id="input" style={{ marginLeft: "-10px" }} />
-      <div className="node-header" style={{ cursor: "pointer" }} onClick={() => setExpanded(!expanded)}>
+      <div className="node-header drag-handle">
         MODULE
-        <span style={{ marginLeft: "auto", fontSize: 9 }}>{expanded ? "▲" : "▼"}</span>
-        <Handle type="source" position={Position.Right} id="output" style={{ top: "50%" }} />
+        <button
+          type="button"
+          className="node-action-btn compact nodrag"
+          style={{ marginLeft: "auto", lineHeight: 1 }}
+          onClick={() => setExpanded((value) => !value)}
+          aria-label={expanded ? "Collapse module details" : "Expand module details"}
+        >
+          {expanded ? "▲" : "▼"}
+        </button>
+        <Handle type="source" position={Position.Right} id="output" className="nodrag" style={{ top: "50%" }} />
       </div>
       <div className="node-body">
         <select
@@ -62,9 +71,7 @@ export default function ModuleNode({ id, data, selected }) {
             {selected_mod.nodes?.length || 0}N · {selected_mod.edges?.length || 0}E
           </div>
         )}
-        {result !== undefined && (
-          <div className="node-result">{typeof result === "object" ? JSON.stringify(result) : String(result)}</div>
-        )}
+        {result !== undefined && <div className="node-result">{formatValue(result)}</div>}
       </div>
     </div>
   );

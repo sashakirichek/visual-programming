@@ -26,13 +26,13 @@ export default function ScopeNode({ id, data, selected }) {
       <div className="group-header drag-handle">
         <span className="group-color-dot" style={{ background: color }} />
         <input
-          className="group-name-input"
+          className="group-name-input nodrag"
           value={data.name || ""}
           onChange={(e) => updateNodeData(id, { name: e.target.value })}
           placeholder="label"
         />
         <select
-          className="group-color-select"
+          className="group-color-select nodrag"
           value={color}
           onChange={(e) => updateNodeData(id, { color: e.target.value })}
         >

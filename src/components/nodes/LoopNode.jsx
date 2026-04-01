@@ -1,5 +1,6 @@
 import { Handle, Position, useHandleConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
 const LOOP_OPS = ["forEach", "map", "filter"];
 
@@ -22,16 +23,16 @@ function ArrayRow({ id, data, updateNodeData }) {
   );
 }
 
-export default function LoopNode({ id, data, selected }) {
+export default function LoopNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
 
   return (
-    <div className={`node loop-node ${selected ? "selected" : ""}`}>
-      <div className="node-header">
+    <div className={`node loop-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <div className="node-header drag-handle">
         LOOP
-        <Handle type="source" position={Position.Right} id="result" style={{ top: "50%" }} />
+        <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />
       </div>
       <div className="node-body">
         <select
@@ -46,10 +47,11 @@ export default function LoopNode({ id, data, selected }) {
           ))}
         </select>
         <ArrayRow id={id} data={data} updateNodeData={updateNodeData} />
-        <div className="node-row">
+        <div className="node-row node-row-stack">
           <label>{data.loopOp === "filter" ? "Predicate:" : data.loopOp === "map" ? "Transform:" : "Effect:"}</label>
-          <input
-            className="node-input small"
+          <textarea
+            className="node-textarea node-param-textarea"
+            rows={4}
             value={data.transform || ""}
             onChange={(e) => updateNodeData(id, { transform: e.target.value })}
             placeholder={
@@ -61,9 +63,7 @@ export default function LoopNode({ id, data, selected }) {
             }
           />
         </div>
-        {result !== undefined && (
-          <div className="node-result">{Array.isArray(result) ? `[${result.join(", ")}]` : String(result)}</div>
-        )}
+        {result !== undefined && <div className="node-result">{formatValue(result)}</div>}
       </div>
     </div>
   );

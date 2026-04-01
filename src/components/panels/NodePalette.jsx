@@ -28,6 +28,15 @@ export default function NodePalette({ modules }) {
       position: { x: 200 + Math.random() * 200, y: 100 + Math.random() * 200 },
       data: { label: type },
     };
+    if (type === "inputNode") {
+      nodeData.data = { label: type, value: "", valueType: "literal" };
+    }
+    if (type === "variableNode") {
+      nodeData.data = { label: type, name: "", value: "", valueType: "literal" };
+    }
+    if (type === "functionNode") {
+      nodeData.data = { label: type, functionName: "", closureCount: 0 };
+    }
     if (type === "scopeNode") {
       nodeData.style = { width: 400, height: 250 };
       nodeData.zIndex = -1;

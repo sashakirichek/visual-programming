@@ -92,13 +92,18 @@ export default function App() {
   }, []);
 
   const styledNodes = nodes.map((node) => {
-    if (!debugMode || !debugSteps.length) return node;
+    const baseNode = {
+      ...node,
+      dragHandle: node.dragHandle || ".drag-handle",
+    };
+
+    if (!debugMode || !debugSteps.length) return baseNode;
     const currentStepNodeId = debugSteps[debugStep]?.nodeId;
     if (node.id === currentStepNodeId) {
       return {
-        ...node,
+        ...baseNode,
         style: {
-          ...node.style,
+          ...baseNode.style,
           boxShadow: "0 0 0 2px var(--accent-debug)",
         },
       };
@@ -106,14 +111,14 @@ export default function App() {
     const pastStep = debugSteps.slice(0, debugStep).find((s) => s.nodeId === node.id);
     if (pastStep) {
       return {
-        ...node,
+        ...baseNode,
         style: {
-          ...node.style,
+          ...baseNode.style,
           boxShadow: "0 0 0 1px rgba(0, 229, 255, 0.3)",
         },
       };
     }
-    return node;
+    return baseNode;
   });
 
   const edgeReconnectSuccessful = useRef(true);
@@ -187,9 +192,11 @@ export default function App() {
             onPaneClick={handlePaneClick}
             nodeTypes={nodeTypes}
             fitView
+            snapToGrid
+            snapGrid={[8, 8]}
             deleteKeyCode="Delete"
           >
-            <Background variant="dots" gap={16} size={1} color="#222" />
+            <Background variant="dots" gap={16} size={1} color="#888" />
             <Controls />
             <MiniMap nodeStrokeWidth={1} />
           </ReactFlow>

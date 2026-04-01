@@ -108,22 +108,21 @@ export default function ChallengePanel() {
             )}
           </div>
 
-          {activeChallenge.hints?.length > 0 && (
-            <div style={{ marginTop: 8 }}>
-              <button className="toolbar-btn" onClick={() => setShowHints((h) => !h)}>
-                {showHints ? "HIDE HINTS" : "SHOW HINTS"}
-              </button>
-              {showHints && (
-                <ul className="hint-list">
-                  {activeChallenge.hints.map((h, i) => (
-                    <li key={i}>{h}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-
           <div className="challenge-actions">
+            {activeChallenge.hints?.length > 0 && (
+              <>
+                <button className="toolbar-btn" onClick={() => setShowHints((h) => !h)}>
+                  {showHints ? "HIDE HINTS" : "SHOW HINTS"}
+                </button>
+                {showHints && (
+                  <ul className="hint-list">
+                    {activeChallenge.hints.map((h, i) => (
+                      <li key={i}>{h}</li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
             <button className="toolbar-btn" onClick={handleSubmit}>
               SUBMIT
             </button>

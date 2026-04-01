@@ -1,4 +1,5 @@
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
 export default function PropertiesPanel() {
   const selectedNode = useFlowStore((s) => s.selectedNode);
@@ -44,7 +45,7 @@ export default function PropertiesPanel() {
           <label>{key}</label>
           <input
             className="prop-input"
-            value={String(value || "")}
+            value={String(value ?? "")}
             onChange={(e) => updateNodeData(node.id, { [key]: e.target.value })}
           />
         </div>
@@ -54,7 +55,7 @@ export default function PropertiesPanel() {
         <>
           <div className="prop-section-title">Result</div>
           <div className="prop-result">
-            <pre>{typeof result === "object" ? JSON.stringify(result, null, 2) : String(result)}</pre>
+            <pre>{formatValue(result, { pretty: true })}</pre>
           </div>
         </>
       )}

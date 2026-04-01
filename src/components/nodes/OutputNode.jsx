@@ -1,5 +1,6 @@
 import { Handle, Position, useHandleConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
 const DISPLAY_TYPES = ["inferred", "table", "gauge", "progress", "slider", "chart", "text"];
 
@@ -29,6 +30,9 @@ const DATA_HINTS = {
 
 function getTypeBadge(value) {
   if (value === undefined || value === null) return null;
+  if (value instanceof Map) return "MAP";
+  if (value instanceof Set) return "SET";
+  if (typeof value === "symbol") return "SYM";
   if (Array.isArray(value)) return "ARRAY";
   if (typeof value === "object") return "OBJECT";
   if (typeof value === "number") return "NUM";
@@ -39,6 +43,7 @@ function getTypeBadge(value) {
 
 function inferDisplayType(value) {
   if (value === undefined || value === null) return "text";
+  if (value instanceof Map || value instanceof Set || typeof value === "symbol") return "text";
   if (typeof value === "boolean") return "text";
   if (typeof value === "number") return "text";
   if (Array.isArray(value)) {
@@ -50,6 +55,42 @@ function inferDisplayType(value) {
 }
 
 function TableViz({ value }) {
+  if (value instanceof Map) {
+    return (
+      <table className="output-table">
+        <thead>
+          <tr>
+            <th>key</th>
+            <th>value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from(value.entries()).map(([key, entryValue], index) => (
+            <tr key={index}>
+              <td>{formatValue(key)}</td>
+              <td>{formatValue(entryValue)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
+  if (value instanceof Set) {
+    return (
+      <table className="output-table">
+        <tbody>
+          {Array.from(value.values()).map((entryValue, index) => (
+            <tr key={index}>
+              <td className="output-table-idx">{index}</td>
+              <td>{formatValue(entryValue)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  }
+
   if (Array.isArray(value) && value.length > 0 && typeof value[0] === "object") {
     const keys = Object.keys(value[0]);
     return (
@@ -65,7 +106,7 @@ function TableViz({ value }) {
           {value.map((row, i) => (
             <tr key={i}>
               {keys.map((k) => (
-                <td key={k}>{String(row[k] ?? "")}</td>
+                <td key={k}>{formatValue(row[k] ?? "")}</td>
               ))}
             </tr>
           ))}
@@ -80,7 +121,7 @@ function TableViz({ value }) {
         {arr.map((item, i) => (
           <tr key={i}>
             <td className="output-table-idx">{Array.isArray(value) ? i : item[0]}</td>
-            <td>{Array.isArray(value) ? String(item) : String(item[1])}</td>
+            <td>{Array.isArray(value) ? formatValue(item) : formatValue(item[1])}</td>
           </tr>
         ))}
       </tbody>
@@ -147,9 +188,13 @@ function SliderViz({ value, min = 0, max = 100, color }) {
 function ChartViz({ value, color }) {
   const arr = Array.isArray(value)
     ? value.map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
-    : typeof value === "object" && value
-      ? Object.values(value).map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
-      : [];
+    : value instanceof Map
+      ? Array.from(value.values()).map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
+      : value instanceof Set
+        ? Array.from(value.values()).map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
+        : typeof value === "object" && value
+          ? Object.values(value).map((v) => (typeof v === "number" ? v : parseFloat(v) || 0))
+          : [];
   if (arr.length === 0) return <span className="output-placeholder">No data</span>;
   const max = Math.max(...arr);
   const min = Math.min(...arr, 0);
@@ -196,7 +241,7 @@ function renderViz(displayType, value, min, max, color) {
       return <ChartViz value={value} color={color} />;
     default: {
       const text =
-        value !== undefined ? (typeof value === "object" ? JSON.stringify(value, null, 2) : String(value)) : "—";
+        value !== undefined ? formatValue(value, { pretty: value !== null && typeof value === "object" }) : "—";
       return <pre className="node-result-box output-scrollable">{text}</pre>;
     }
   }
@@ -230,7 +275,7 @@ function OutputParamRow({ id, param, data, updateNodeData }) {
   );
 }
 
-export default function OutputNode({ id, data, selected }) {
+export default function OutputNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
   const executionResults = useFlowStore((s) => s.executionResults);
   const edges = useFlowStore((s) => s.edges);
@@ -251,9 +296,9 @@ export default function OutputNode({ id, data, selected }) {
   const color = resolve("color", null);
 
   return (
-    <div className={`node output-node ${selected ? "selected" : ""}`}>
+    <div className={`node output-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
       <Handle type="target" position={Position.Left} id="value" />
-      <div className="node-header">
+      <div className="node-header drag-handle">
         OUTPUT
         {badge && <span className="type-badge">{badge}</span>}
       </div>

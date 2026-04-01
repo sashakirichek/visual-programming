@@ -1,5 +1,6 @@
 import { Handle, Position, useHandleConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
 const METHODS = ["GET", "POST", "PUT", "DELETE"];
 
@@ -23,16 +24,16 @@ function BodyRow({ id, data, updateNodeData }) {
   );
 }
 
-export default function ApiNode({ id, data, selected }) {
+export default function ApiNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
 
   return (
-    <div className={`node api-node ${selected ? "selected" : ""}`}>
-      <div className="node-header">
+    <div className={`node api-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <div className="node-header drag-handle">
         API
-        <Handle type="source" position={Position.Right} id="result" style={{ top: "50%" }} />
+        <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />
       </div>
       <div className="node-body">
         <select
@@ -63,11 +64,7 @@ export default function ApiNode({ id, data, selected }) {
         )}
         {result !== undefined && (
           <div className="node-result">
-            {typeof result === "string" && result.startsWith("Error")
-              ? result
-              : typeof result === "object"
-                ? JSON.stringify(result).slice(0, 80) + (JSON.stringify(result).length > 80 ? "..." : "")
-                : String(result)}
+            {typeof result === "string" && result.startsWith("Error") ? result : formatValue(result, { maxLength: 80 })}
           </div>
         )}
       </div>

@@ -3,6 +3,8 @@
  * Supports scope-aware variable resolution with closure semantics
  */
 
+import { getClosureCount, parseLiteralValue, parseNodeValue } from "./valueUtils";
+
 const OPERATORS = {
   "+": (a, b) => a + b,
   "-": (a, b) => a - b,
@@ -129,27 +131,31 @@ const ARRAY_FUNCTIONS = {
   Object_assign: (...args) => Object.assign({}, ...args),
 };
 
-function parseValue(str) {
-  if (str === undefined || str === null || str === "") return str;
-  if (str === "true") return true;
-  if (str === "false") return false;
-  if (str === "null") return null;
-  if (str === "undefined") return undefined;
-  try {
-    const parsed = JSON.parse(str);
-    return parsed;
-  } catch {
-    return str;
-  }
-}
+const MAP_FUNCTIONS = {
+  Map_new: () => new Map(),
+  Map_set: (map, key, value) => { map.set(key, value); return map; },
+  Map_get: (map, key) => map.get(key),
+  Map_has: (map, key) => map.has(key),
+  Map_size: (map) => map.size,
+  Map_delete: (map, key) => { map.delete(key); return map; },
+  Map_entries: (map) => [...map.entries()],
+  Map_keys: (map) => [...map.keys()],
+  Map_values: (map) => [...map.values()],
+};
 
 const CALLBACK_FUNCTIONS = new Set(["map", "filter", "reduce", "find", "some", "every", "flatMap", "sort"]);
 
-function parseLambda(str) {
+function parseLambda(str, bindings = {}) {
   if (!str || typeof str !== "string") return null;
   const trimmed = str.trim();
   if (!trimmed) return null;
   try {
+    const bindNames = Object.keys(bindings);
+    const bindValues = Object.values(bindings);
+    if (bindNames.length > 0) {
+      const factory = new Function(...bindNames, `"use strict"; return (${trimmed});`);
+      return factory(...bindValues);
+    }
     return new Function(`"use strict"; return (${trimmed});`)();
   } catch {
     return null;
@@ -234,7 +240,7 @@ async function executeNode(node, nodes, edges, results, logs) {
 
   switch (type) {
     case "inputNode": {
-      return parseValue(data.value);
+      return parseNodeValue(data.value, data.valueType);
     }
 
     case "outputNode": {
@@ -245,21 +251,39 @@ async function executeNode(node, nodes, edges, results, logs) {
     case "variableNode": {
       const input = getIncomingValue(node.id, "value", nodes, edges, results);
       if (input !== undefined) return input;
-      return parseValue(data.value);
+      return parseNodeValue(data.value, data.valueType);
     }
 
     case "operatorNode": {
       const op = data.operator || "+";
       const a = getIncomingValue(node.id, "a", nodes, edges, results);
       const b = getIncomingValue(node.id, "b", nodes, edges, results);
-      const aVal = a !== undefined ? a : parseValue(data.aValue);
-      const bVal = b !== undefined ? b : parseValue(data.bValue);
+      const aVal = a !== undefined ? a : parseLiteralValue(data.aValue);
+      const bVal = b !== undefined ? b : parseLiteralValue(data.bValue);
       if (OPERATORS[op]) return OPERATORS[op](aVal, bVal);
       return `Unknown operator: ${op}`;
     }
 
     case "functionNode": {
       const fnName = data.functionName || "";
+
+      // Collect closure bindings for callback functions
+      const bindings = {};
+      if (CALLBACK_FUNCTIONS.has(fnName)) {
+        const closureCount = getClosureCount(data);
+        for (let i = 0; i < closureCount; i++) {
+          const bindName = data[`bindName${i}`];
+          if (bindName) {
+            const bindVal = getIncomingValue(node.id, `bind${i}`, nodes, edges, results);
+            if (bindVal !== undefined) {
+              bindings[bindName] = bindVal;
+            } else if (data[`bind${i}`] !== undefined && data[`bind${i}`] !== "") {
+              bindings[bindName] = parseLiteralValue(data[`bind${i}`]);
+            }
+          }
+        }
+      }
+
       const args = [];
       for (let i = 0; i < 4; i++) {
         const arg = getIncomingValue(node.id, `arg${i}`, nodes, edges, results);
@@ -267,17 +291,17 @@ async function executeNode(node, nodes, edges, results, logs) {
         else if (data[`arg${i}`] !== undefined && data[`arg${i}`] !== "") {
           // For callback-expecting functions, parse lambda from the callback arg position
           if (CALLBACK_FUNCTIONS.has(fnName) && i === 1) {
-            const fn = parseLambda(data[`arg${i}`]);
+            const fn = parseLambda(data[`arg${i}`], bindings);
             if (fn) {
               args.push(fn);
               continue;
             }
           }
-          args.push(parseValue(data[`arg${i}`]));
+          args.push(parseLiteralValue(data[`arg${i}`]));
         }
       }
 
-      const allFns = { ...MATH_FUNCTIONS, ...STRING_FUNCTIONS, ...ARRAY_FUNCTIONS };
+      const allFns = { ...MATH_FUNCTIONS, ...STRING_FUNCTIONS, ...ARRAY_FUNCTIONS, ...MAP_FUNCTIONS };
       if (allFns[fnName]) return allFns[fnName](...args);
       return `Unknown function: ${fnName}`;
     }
@@ -286,15 +310,15 @@ async function executeNode(node, nodes, edges, results, logs) {
       const condition = getIncomingValue(node.id, "condition", nodes, edges, results);
       const trueBranch = getIncomingValue(node.id, "true", nodes, edges, results);
       const falseBranch = getIncomingValue(node.id, "false", nodes, edges, results);
-      const cond = condition !== undefined ? condition : parseValue(data.condition);
-      const trueVal = trueBranch !== undefined ? trueBranch : parseValue(data.trueValue);
-      const falseVal = falseBranch !== undefined ? falseBranch : parseValue(data.falseValue);
+      const cond = condition !== undefined ? condition : parseLiteralValue(data.condition);
+      const trueVal = trueBranch !== undefined ? trueBranch : parseLiteralValue(data.trueValue);
+      const falseVal = falseBranch !== undefined ? falseBranch : parseLiteralValue(data.falseValue);
       return cond ? trueVal : falseVal;
     }
 
     case "loopNode": {
       const arr = getIncomingValue(node.id, "array", nodes, edges, results);
-      const inputArr = arr !== undefined ? arr : parseValue(data.array);
+      const inputArr = arr !== undefined ? arr : parseLiteralValue(data.array);
       if (!Array.isArray(inputArr)) return `Error: Expected array, got ${typeof inputArr}`;
       const op = data.loopOp || "forEach";
       const fn = parseLambda(data.transform);
@@ -349,19 +373,19 @@ async function executeNode(node, nodes, edges, results, logs) {
         }
       }
       if (op === "stringify") {
-        const val = input !== undefined ? input : parseValue(data.jsonValue);
+        const val = input !== undefined ? input : parseLiteralValue(data.jsonValue);
         return JSON.stringify(val, null, 2);
       }
       if (op === "get") {
-        const obj = input !== undefined ? input : parseValue(data.jsonValue);
+        const obj = input !== undefined ? input : parseLiteralValue(data.jsonValue);
         const path = data.path || "";
         if (!path) return obj;
         return path.split(".").reduce((acc, key) => acc?.[key], obj);
       }
       if (op === "set") {
-        const obj = input !== undefined ? { ...input } : parseValue(data.jsonValue) || {};
+        const obj = input !== undefined ? { ...input } : parseLiteralValue(data.jsonValue) || {};
         const path = data.path || "";
-        const value = parseValue(data.setValue);
+        const value = parseLiteralValue(data.setValue);
         if (!path) return obj;
         const keys = path.split(".");
         let cur = obj;

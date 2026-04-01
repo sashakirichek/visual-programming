@@ -1,5 +1,6 @@
 import { Handle, Position, useHandleConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import { formatValue } from "../../utils/valueUtils";
 
 const OPERATORS = ["+", "-", "*", "/", "%", "**", "===", "!==", ">", "<", ">=", "<=", "&&", "||", "??"];
 
@@ -22,16 +23,16 @@ function OpRow({ id, handleId, label, dataKey, data, updateNodeData, placeholder
   );
 }
 
-export default function OperatorNode({ id, data, selected }) {
+export default function OperatorNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
 
   return (
-    <div className={`node operator-node ${selected ? "selected" : ""}`}>
-      <div className="node-header">
+    <div className={`node operator-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <div className="node-header drag-handle">
         OPERATOR
-        <Handle type="source" position={Position.Right} id="result" style={{ top: "50%" }} />
+        <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />
       </div>
       <div className="node-body">
         <OpRow
@@ -63,7 +64,7 @@ export default function OperatorNode({ id, data, selected }) {
           updateNodeData={updateNodeData}
           placeholder="or connect"
         />
-        {result !== undefined && <div className="node-result">{JSON.stringify(result)}</div>}
+        {result !== undefined && <div className="node-result">{formatValue(result)}</div>}
       </div>
     </div>
   );
