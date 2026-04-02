@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useFlowStore } from "../store/flowStore";
 import { executeGraph } from "../utils/nodeExecutor";
 import JsonImportExportModal from "./modals/JsonImportExportModal";
+import QrCodeModal from "./modals/QrCodeModal";
 
 export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightPanel }) {
   const nodes = useFlowStore((s) => s.nodes);
@@ -19,6 +20,8 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
   const exportToJson = useFlowStore((s) => s.exportToJson);
 
   const [showJson, setShowJson] = useState(false);
+  const [showQr, setShowQr] = useState(false);
+  const [qrUrl, setQrUrl] = useState("");
   const [shareMsg, setShareMsg] = useState("");
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("vp-theme") || "dark";
@@ -122,14 +125,19 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
     return () => window.removeEventListener("keydown", handler);
   }, [toggleLeft, toggleRight, handleRun, handleDebug, handleStopDebug, debugMode]);
 
-  const handleShareUrl = useCallback(() => {
+  const buildShareUrl = useCallback(() => {
     const json = exportToJson();
     const encoded = btoa(unescape(encodeURIComponent(json)));
     const url = new URL(window.location.href);
     url.search = "";
     url.searchParams.set("flow", encoded);
+    return url.toString();
+  }, [exportToJson]);
+
+  const handleShareUrl = useCallback(() => {
+    const url = buildShareUrl();
     navigator.clipboard
-      .writeText(url.toString())
+      .writeText(url)
       .then(() => {
         setShareMsg("URL copied!");
         setTimeout(() => setShareMsg(""), 2000);
@@ -138,7 +146,12 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
         setShareMsg("Copy failed");
         setTimeout(() => setShareMsg(""), 2000);
       });
-  }, [exportToJson]);
+  }, [buildShareUrl]);
+
+  const handleShowQr = useCallback(() => {
+    setQrUrl(buildShareUrl());
+    setShowQr(true);
+  }, [buildShareUrl]);
 
   return (
     <>
@@ -241,6 +254,9 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           <button className="toolbar-btn share-btn" onClick={handleShareUrl} title="Copy shareable URL to clipboard">
             {shareMsg || "Share"}
           </button>
+          <button className="toolbar-btn qr-btn" onClick={handleShowQr} title="Show QR code for this flow">
+            QR
+          </button>
 
           <div className="toolbar-separator" />
           <button
@@ -262,6 +278,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
       </div>
 
       {showJson && <JsonImportExportModal onClose={() => setShowJson(false)} />}
+      {showQr && <QrCodeModal url={qrUrl} onClose={() => setShowQr(false)} />}
     </>
   );
 }
