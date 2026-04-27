@@ -140,11 +140,11 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
       .writeText(url)
       .then(() => {
         setShareMsg("URL copied!");
-        setTimeout(() => setShareMsg(""), 2000);
+        setTimeout(() => setShareMsg(""), 5000);
       })
       .catch(() => {
         setShareMsg("Copy failed");
-        setTimeout(() => setShareMsg(""), 2000);
+        setTimeout(() => setShareMsg(""), 5000);
       });
   }, [buildShareUrl]);
 
@@ -251,7 +251,12 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           <button className="toolbar-btn json-btn" onClick={() => setShowJson(true)} title="Import/Export JSON">
             JSON
           </button>
-          <button className="toolbar-btn share-btn" onClick={handleShareUrl} title="Copy shareable URL to clipboard">
+          <button
+            className="toolbar-btn share-btn"
+            data-testid="shareUrl"
+            onClick={handleShareUrl}
+            title="Copy shareable URL to clipboard"
+          >
             {shareMsg || "Share"}
           </button>
           <button className="toolbar-btn qr-btn" onClick={handleShowQr} title="Show QR code for this flow">
