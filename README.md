@@ -15,16 +15,16 @@ A node-based visual programming environment built with React, [@xyflow/react](ht
 
 ## Node Types
 
-| Node         | Description                                              |
-| ------------ | -------------------------------------------------------- |
-| 📥 Input     | Static value input (string, number, boolean, JSON)       |
-| 📤 Output    | Display the result of connected nodes                    |
-| 📦 Variable  | Named variable that holds a value                        |
-| ⚙️ Operator  | Binary math/logic operator                               |
-| ƒ Function   | Built-in JS function (Math, String, Array, Object, JSON) |
-| 🔀 Condition | If/else branch based on a condition                      |
-| 🔄 Loop      | Array iteration (forEach, map, filter)                   |
-| 📄 JSON      | JSON parse/stringify/get/set operations                  |
+| Node      | Description                                              |
+| --------- | -------------------------------------------------------- |
+| Input     | Static value input (string, number, boolean, JSON)       |
+| Output    | Display the result of connected nodes                    |
+| Variable  | Named variable that holds a value                        |
+| Operator  | Binary math/logic operator                               |
+| Function  | Built-in JS function (Math, String, Array, Object, JSON) |
+| Condition | If/else branch based on a condition                      |
+| Loop      | Array iteration (forEach, map, filter)                   |
+| JSON      | JSON parse/stringify/get/set operations                  |
 
 ## Getting Started
 
@@ -54,3 +54,18 @@ To instruct the AI coding agent to fix an issue:
 1. Create a GitHub issue describing the bug or feature request
 2. Add the `approved-for-fix` label (only repository owners/maintainers can do this)
 3. The coding agent workflow will automatically trigger and open a pull request with the fix
+
+# Azure deploy notes (not implemented)
+
+## Build your app
+
+npm run build # Creates dist/ folder
+
+## Create static web app (one-time)
+
+az staticwebapps create --name my-app --resource-group my-rg --location eastus \
+ --build-property-app-location "." --build-property-output-location "dist"
+
+## Deploy
+
+az staticwebapp deploy --name my-app --build-folder dist
