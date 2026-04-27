@@ -65,7 +65,7 @@ export default function SolutionsPanel() {
   };
 
   return (
-    <div className="solutions-panel">
+    <div className="solutions-panel" data-testid="solutions-panel">
       <div className="panel-header">SOLUTIONS</div>
 
       <div className="save-form">
@@ -82,7 +82,7 @@ export default function SolutionsPanel() {
           value={saveNotes}
           onChange={(e) => setSaveNotes(e.target.value)}
         />
-        <button className="toolbar-btn" onClick={handleSave}>
+        <button className="toolbar-btn" data-testid="save-current-solution" onClick={handleSave}>
           SAVE CURRENT
         </button>
       </div>

@@ -12,6 +12,9 @@ test("get started link", async ({ page }) => {
   await homePage.navigateToHomePage();
   await homePage.verifyShareButtonIsVisible();
 
+  // Grant clipboard permission so navigator.clipboard.writeText() succeeds in CI
+  await page.context().grantPermissions(["clipboard-write"]);
+
   const shareButton = page.getByTitle("Copy shareable URL to clipboard");
   await expect(shareButton).toContainText("Share");
   await shareButton.click();
@@ -30,6 +33,9 @@ test("share button functionality", async ({ page }) => {
   const homePage = new HomePage(page);
   await homePage.navigateToHomePage();
   await homePage.verifyShareButtonIsVisible();
+
+  // Grant clipboard permission so navigator.clipboard.writeText() succeeds in CI
+  await page.context().grantPermissions(["clipboard-write"]);
 
   const shareButton = page.getByTitle("Copy shareable URL to clipboard");
   await shareButton.click();
