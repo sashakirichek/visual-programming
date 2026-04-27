@@ -12,6 +12,9 @@ test("shareButton_showsCopiedMessageThenReverts", async ({ page }) => {
   await homePage.navigateToHomePage();
   await homePage.waitForPageToLoad();
 
+  // Grant clipboard permission so navigator.clipboard.writeText() succeeds in CI
+  await page.context().grantPermissions(["clipboard-write"]);
+
   const shareButton = page.getByTestId("shareUrl");
   await expect(shareButton).toBeVisible();
   await expect(shareButton).toContainText("Share");
