@@ -245,6 +245,7 @@ body {
 }
 .toolbar-btn.json-btn,
 .toolbar-btn.share-btn,
+.toolbar-btn.qr-btn,
 .toolbar-btn.viz-btn {
   color: var(--label-tertiary);
 }
@@ -1335,6 +1336,22 @@ body {
   font-size: 13px;
   color: var(--label-secondary);
   font-family: var(--font-mono);
+}
+
+/* ===== QR Code Modal ===== */
+.qr-modal {
+  width: auto;
+}
+.qr-modal-body {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+.qr-code-wrapper {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 4px;
+  display: inline-flex;
 }
 
 /* ===== Empty State ===== */
