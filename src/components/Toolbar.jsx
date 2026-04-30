@@ -21,6 +21,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
 
   const [showJson, setShowJson] = useState(false);
   const [showQr, setShowQr] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [qrUrl, setQrUrl] = useState("");
   const [shareMsg, setShareMsg] = useState("");
   const [theme, setTheme] = useState(() => {
@@ -153,14 +154,50 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
     setShowQr(true);
   }, [buildShareUrl]);
 
+  const closeMenuOnClick = (action) => {
+    action();
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <>
       <div className="toolbar">
         <div className="toolbar-brand">
-          <span className="brand-icon">&#9670;</span>
-          <span className="brand-name">Visual Programming</span>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="#42a5f5"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
+              stroke="#42a5f5"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path d="M12 12L12 22" stroke="#42a5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 2L18 12" stroke="#42a5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
         </div>
 
+        {/* Hamburger menu button - mobile only */}
+        <button
+          className="hamburger-menu"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          title="Toggle menu"
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        {/* Desktop toolbar actions */}
         <div className="toolbar-actions">
           <button
             className={`toolbar-btn ${leftPanel === "palette" ? "active" : ""}`}
@@ -220,12 +257,12 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           </button>
 
           {debugMode ? (
-            <button className="toolbar-btn debug-stop-btn" onClick={handleStopDebug} title="Stop debugging (D)">
+            <button className="toolbar-btn debug-btn" onClick={handleStopDebug} title="Stop debugging (D)">
               Stop
             </button>
           ) : (
             <button
-              className="toolbar-btn debug-btn"
+              className={`toolbar-btn debug-btn ${nodes.length === 0 ? "opacity-50" : ""}`}
               onClick={handleDebug}
               disabled={nodes.length === 0}
               title="Run in debug mode (D)"
@@ -238,7 +275,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
             CLR
           </button>
           <button
-            className="toolbar-btn clear-all-btn"
+            className="toolbar-btn"
             onClick={handleClearAll}
             disabled={nodes.length === 0 && edges.length === 0}
             title="Remove all nodes and edges"
@@ -248,18 +285,18 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
 
           <div className="toolbar-separator" />
 
-          <button className="toolbar-btn json-btn" onClick={() => setShowJson(true)} title="Import/Export JSON">
+          <button className="toolbar-btn" onClick={() => setShowJson(true)} title="Import/Export JSON">
             JSON
           </button>
           <button
-            className="toolbar-btn share-btn"
+            className="toolbar-btn"
             data-testid="shareUrl"
             onClick={handleShareUrl}
             title="Copy shareable URL to clipboard"
           >
             {shareMsg || "Share"}
           </button>
-          <button className="toolbar-btn qr-btn" onClick={handleShowQr} title="Show QR code for this flow">
+          <button className="toolbar-btn" onClick={handleShowQr} title="Show QR code for this flow">
             QR
           </button>
 
@@ -272,14 +309,80 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
             {theme === "dark" ? "☀" : "☾"}
           </button>
         </div>
-
+        {/* 
         <div className="toolbar-status">
           {isRunning && <span className="status-running">RUNNING...</span>}
           {debugMode && <span className="status-debug">DBG MODE</span>}
           <span className="status-info">
             {nodes.length}N {edges.length}E
           </span>
-        </div>
+        </div> */}
+
+        {/* Mobile menu dropdown */}
+        {isMobileMenuOpen && (
+          <div className="mobile-menu">
+            <button
+              onClick={() => closeMenuOnClick(() => toggleLeft("palette"))}
+              className={leftPanel === "palette" ? "active" : ""}
+            >
+              Nodes
+            </button>
+            <button
+              onClick={() => closeMenuOnClick(() => toggleLeft("modules"))}
+              className={leftPanel === "modules" ? "active" : ""}
+            >
+              Modules
+            </button>
+            <button
+              onClick={() => closeMenuOnClick(() => toggleRight("properties"))}
+              className={rightPanel === "properties" ? "active" : ""}
+            >
+              Props
+            </button>
+            <div className="mobile-menu-separator"></div>
+            <button
+              onClick={() => closeMenuOnClick(() => toggleLeft("examples"))}
+              className={leftPanel === "examples" ? "active" : ""}
+            >
+              Examples
+            </button>
+            <button
+              onClick={() => closeMenuOnClick(() => toggleLeft("challenges"))}
+              className={leftPanel === "challenges" ? "active" : ""}
+            >
+              Challenge
+            </button>
+            <button
+              onClick={() => closeMenuOnClick(() => toggleLeft("solutions"))}
+              className={leftPanel === "solutions" ? "active" : ""}
+            >
+              Solutions
+            </button>
+            <div className="mobile-menu-separator"></div>
+            <button onClick={() => closeMenuOnClick(handleRun)} disabled={isRunning || nodes.length === 0}>
+              Run
+            </button>
+            <button
+              onClick={() => closeMenuOnClick(debugMode ? handleStopDebug : handleDebug)}
+              disabled={!debugMode && nodes.length === 0}
+            >
+              {debugMode ? "Stop" : "Debug"}
+            </button>
+            <button onClick={() => closeMenuOnClick(handleClear)}>CLR</button>
+            <button
+              onClick={() => closeMenuOnClick(handleClearAll)}
+              disabled={nodes.length === 0 && edges.length === 0}
+            >
+              Clear All
+            </button>
+            <div className="mobile-menu-separator"></div>
+            <button onClick={() => closeMenuOnClick(() => setShowJson(true))}>JSON</button>
+            <button onClick={() => closeMenuOnClick(handleShareUrl)}>{shareMsg || "Share"}</button>
+            <button onClick={() => closeMenuOnClick(handleShowQr)}>QR</button>
+            <div className="mobile-menu-separator"></div>
+            <button onClick={() => closeMenuOnClick(toggleTheme)}>{theme === "dark" ? "☀ Light" : "☾ Dark"}</button>
+          </div>
+        )}
       </div>
 
       {showJson && <JsonImportExportModal onClose={() => setShowJson(false)} />}

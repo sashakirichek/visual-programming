@@ -64,7 +64,12 @@ export default function App() {
 
   const handlePaneClick = useCallback(() => {
     setSelectedNode(null);
-  }, [setSelectedNode]);
+    // Close panels on mobile when clicking diagram
+    if (window.innerWidth < 768) {
+      setLeftPanel(null);
+      setRightPanel(null);
+    }
+  }, [setSelectedNode, setLeftPanel, setRightPanel]);
 
   // URL import: ?flow=<base64-encoded JSON>
   useEffect(() => {
@@ -198,7 +203,7 @@ export default function App() {
           >
             <Background variant="dots" gap={16} size={1} color="#888" />
             <Controls />
-            <MiniMap nodeStrokeWidth={1} />
+            {/* <MiniMap nodeStrokeWidth={1} /> */}
           </ReactFlow>
           {debugMode && (
             <div className="debug-bar">
