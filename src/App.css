@@ -264,26 +264,6 @@ body {
 }
 
 /* Theme toggle */
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  padding: 2px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--separator-opaque);
-  background: var(--fill-quaternary);
-  color: var(--label-secondary);
-  font-size: 16px;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    color 0.15s;
-}
-.theme-toggle:hover {
-  background: var(--fill-tertiary);
-  color: var(--accent);
-}
 
 .toolbar-status {
   margin-left: auto;
@@ -2204,10 +2184,6 @@ body {
 
   .toolbar-brand {
     flex: 1;
-  }
-
-  .theme-toggle {
-    display: none;
   }
 
   .side-panel {

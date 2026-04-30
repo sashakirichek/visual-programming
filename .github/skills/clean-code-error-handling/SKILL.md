@@ -5,9 +5,10 @@ description:
   catch blocks, error returns, null checks, optional chaining, or integrates a new external library or API. Covers
   Clean Code chapters 7 (Error Handling) and 8 (Boundaries). Be thorough — trace every error path and spend tokens
   generously on analysis.
-argument-hint: '[files, PR, or module to review]'
+argument-hint: "[files, PR, or module to review]"
 user-invocable: true
 disable-model-invocation: true
+context: fork
 ---
 
 # Clean Code — Error Handling & Boundaries Review
@@ -16,7 +17,7 @@ disable-model-invocation: true
 
 Use this skill after any change that introduces error handling logic, external service calls, new library imports, or
 null/undefined guards. Also use when a reviewer flags swallowed exceptions, missing error context, null returns, or
-direct third-party calls scattered through business code. This skill is aligned to Robert C. Martin's *Clean Code*
+direct third-party calls scattered through business code. This skill is aligned to Robert C. Martin's _Clean Code_
 chapters 7 (Error Handling) and 8 (Boundaries).
 
 ## Review Workflow
@@ -52,13 +53,13 @@ chapters 7 (Error Handling) and 8 (Boundaries).
 
 ### Analysis & Remediation Checklist
 
-| #   | Check                                                     | Status           | Finding | Fix Applied |
-| --- | --------------------------------------------------------- | ---------------- | ------- | ----------- |
-| 1   | Errors include operation context (what failed and why)    | ✅ / ⚠️ / ❌ / — |         |             |
-| 2   | No null/undefined returned as error signal                | ✅ / ⚠️ / ❌ / — |         |             |
-| 3   | No null accepted as function argument                     | ✅ / ⚠️ / ❌ / — |         |             |
-| 4   | No swallowed errors (empty catch / ignored callback)      | ✅ / ⚠️ / ❌ / — |         |             |
-| 5   | Third-party calls isolated behind adapter / wrapper       | ✅ / ⚠️ / ❌ / — |         |             |
+| #   | Check                                                  | Status           | Finding | Fix Applied |
+| --- | ------------------------------------------------------ | ---------------- | ------- | ----------- |
+| 1   | Errors include operation context (what failed and why) | ✅ / ⚠️ / ❌ / — |         |             |
+| 2   | No null/undefined returned as error signal             | ✅ / ⚠️ / ❌ / — |         |             |
+| 3   | No null accepted as function argument                  | ✅ / ⚠️ / ❌ / — |         |             |
+| 4   | No swallowed errors (empty catch / ignored callback)   | ✅ / ⚠️ / ❌ / — |         |             |
+| 5   | Third-party calls isolated behind adapter / wrapper    | ✅ / ⚠️ / ❌ / — |         |             |
 
 > **✅** pass, **⚠️** warning, **❌** fail, **—** not applicable.
 > For each ⚠️ or ❌ list every instance with file, line, pattern, and suggested fix.

@@ -5,9 +5,10 @@ description:
   tests, or when a reviewer flags flaky tests, slow suites, unclear assertions, or missing coverage for critical paths.
   Covers Clean Code chapter 9 (Unit Tests) and the F.I.R.S.T. principles. Be thorough — read every test body and spend
   tokens generously on analysis.
-argument-hint: '[test files, PR, or module to review]'
+argument-hint: "[test files, PR, or module to review]"
 user-invocable: true
 disable-model-invocation: true
+context: fork
 ---
 
 # Clean Code — Test Hygiene Review
@@ -16,7 +17,7 @@ disable-model-invocation: true
 
 Use this skill after any change that adds, modifies, or removes test files. Also use when a reviewer flags unclear test
 names, flaky runs, slow suites, tests with multiple unrelated assertions, or missing edge-case coverage. This skill is
-aligned to Robert C. Martin's *Clean Code* chapter 9 (Unit Tests) and the F.I.R.S.T. principles (Fast, Independent,
+aligned to Robert C. Martin's _Clean Code_ chapter 9 (Unit Tests) and the F.I.R.S.T. principles (Fast, Independent,
 Repeatable, Self-validating, Timely).
 
 ## Review Workflow
@@ -51,15 +52,15 @@ Repeatable, Self-validating, Timely).
 
 ### Analysis & Remediation Checklist
 
-| #   | Check                                                     | Status           | Finding | Fix Applied |
-| --- | --------------------------------------------------------- | ---------------- | ------- | ----------- |
-| 1   | Test names describe expected behaviour                    | ✅ / ⚠️ / ❌ / — |         |             |
-| 2   | One concept per test                                      | ✅ / ⚠️ / ❌ / — |         |             |
-| 3   | Fast — no real I/O in unit tests                           | ✅ / ⚠️ / ❌ / — |         |             |
-| 4   | Independent — no shared mutable state or ordering deps     | ✅ / ⚠️ / ❌ / — |         |             |
-| 5   | Repeatable — deterministic across environments             | ✅ / ⚠️ / ❌ / — |         |             |
-| 6   | Self-validating — explicit assertions in every test        | ✅ / ⚠️ / ❌ / — |         |             |
-| 7   | Critical paths in the diff have test coverage              | ✅ / ⚠️ / ❌ / — |         |             |
+| #   | Check                                                  | Status           | Finding | Fix Applied |
+| --- | ------------------------------------------------------ | ---------------- | ------- | ----------- |
+| 1   | Test names describe expected behaviour                 | ✅ / ⚠️ / ❌ / — |         |             |
+| 2   | One concept per test                                   | ✅ / ⚠️ / ❌ / — |         |             |
+| 3   | Fast — no real I/O in unit tests                       | ✅ / ⚠️ / ❌ / — |         |             |
+| 4   | Independent — no shared mutable state or ordering deps | ✅ / ⚠️ / ❌ / — |         |             |
+| 5   | Repeatable — deterministic across environments         | ✅ / ⚠️ / ❌ / — |         |             |
+| 6   | Self-validating — explicit assertions in every test    | ✅ / ⚠️ / ❌ / — |         |             |
+| 7   | Critical paths in the diff have test coverage          | ✅ / ⚠️ / ❌ / — |         |             |
 
 > **✅** pass, **⚠️** warning, **❌** fail, **—** not applicable.
 > For each ⚠️ or ❌ list every instance with test name, file, and suggested fix.

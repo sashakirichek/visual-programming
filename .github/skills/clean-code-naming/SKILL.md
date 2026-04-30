@@ -5,9 +5,10 @@ description:
   functions, variables, types, files, or modules, or when a reviewer notices unclear names, stale comments, or
   inconsistent formatting. Covers Clean Code chapters 2 (Meaningful Names), 4 (Comments), and 5 (Formatting). Be
   thorough — read every changed symbol and spend tokens generously on analysis.
-argument-hint: '[files, PR, or module to review]'
+argument-hint: "[files, PR, or module to review]"
 user-invocable: true
 disable-model-invocation: true
+context: fork
 ---
 
 # Clean Code — Naming, Comments & Formatting Review
@@ -16,13 +17,13 @@ disable-model-invocation: true
 
 Use this skill after any change that adds or renames functions, variables, types, constants, files, or modules. Also use
 it when a reviewer flags unclear intent, misleading abbreviations, noisy comments, or inconsistent formatting. This
-skill is aligned to Robert C. Martin's *Clean Code* chapters 2, 4, and 5.
+skill is aligned to Robert C. Martin's _Clean Code_ chapters 2, 4, and 5.
 
 ## Review Workflow
 
 1. **Collect scope.** Identify every new or renamed symbol in the changed files. Include function names, parameter
    names, type aliases, constants, file names, and exported module members.
-2. **Intent check.** For each symbol ask: *does the name answer why it exists, what it does, and how it is used?* Flag
+2. **Intent check.** For each symbol ask: _does the name answer why it exists, what it does, and how it is used?_ Flag
    names that require a comment to explain, use single letters outside tiny loop indices, or rely on type prefixes /
    Hungarian notation. Propose a better name for each flag.
 3. **Pronounceability & searchability.** Flag names a reviewer cannot say aloud in a code review or that collide with
@@ -52,15 +53,15 @@ skill is aligned to Robert C. Martin's *Clean Code* chapters 2, 4, and 5.
 
 ### Analysis & Remediation Checklist
 
-| #   | Check                                             | Status           | Finding | Fix Applied |
-| --- | ------------------------------------------------- | ---------------- | ------- | ----------- |
-| 1   | All new names reveal intent                       | ✅ / ⚠️ / ❌ / — |         |             |
-| 2   | Names are pronounceable and searchable            | ✅ / ⚠️ / ❌ / — |         |             |
-| 3   | Domain vs. solution vocabulary used correctly      | ✅ / ⚠️ / ❌ / — |         |             |
-| 4   | No misleading abbreviations or type-encoding       | ✅ / ⚠️ / ❌ / — |         |             |
-| 5   | Comments explain *why*, not *what*                 | ✅ / ⚠️ / ❌ / — |         |             |
-| 6   | No commented-out code in the diff                  | ✅ / ⚠️ / ❌ / — |         |             |
-| 7   | Formatting consistent; formatter applied           | ✅ / ⚠️ / ❌ / — |         |             |
+| #   | Check                                         | Status           | Finding | Fix Applied |
+| --- | --------------------------------------------- | ---------------- | ------- | ----------- |
+| 1   | All new names reveal intent                   | ✅ / ⚠️ / ❌ / — |         |             |
+| 2   | Names are pronounceable and searchable        | ✅ / ⚠️ / ❌ / — |         |             |
+| 3   | Domain vs. solution vocabulary used correctly | ✅ / ⚠️ / ❌ / — |         |             |
+| 4   | No misleading abbreviations or type-encoding  | ✅ / ⚠️ / ❌ / — |         |             |
+| 5   | Comments explain _why_, not _what_            | ✅ / ⚠️ / ❌ / — |         |             |
+| 6   | No commented-out code in the diff             | ✅ / ⚠️ / ❌ / — |         |             |
+| 7   | Formatting consistent; formatter applied      | ✅ / ⚠️ / ❌ / — |         |             |
 
 > **✅** pass, **⚠️** warning, **❌** fail, **—** not applicable.
 > For each ⚠️ or ❌ list every instance with file, line, current name, and suggested fix.

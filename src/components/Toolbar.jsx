@@ -168,20 +168,20 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
               cx="12"
               cy="12"
               r="10"
-              stroke="#42a5f5"
+              stroke="#f5ad42"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
             <path
               d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
-              stroke="#42a5f5"
+              stroke="#f87204"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
-            <path d="M12 12L12 22" stroke="#42a5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M12 2L18 12" stroke="#42a5f5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 12L12 22" stroke="#f87204" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 2L18 12" stroke="#f87204" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </div>
 
@@ -257,12 +257,12 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           </button>
 
           {debugMode ? (
-            <button className="toolbar-btn debug-btn" onClick={handleStopDebug} title="Stop debugging (D)">
+            <button className="toolbar-btn" onClick={handleStopDebug} title="Stop debugging (D)">
               Stop
             </button>
           ) : (
             <button
-              className={`toolbar-btn debug-btn ${nodes.length === 0 ? "opacity-50" : ""}`}
+              className={`toolbar-btn ${nodes.length === 0 ? "opacity-50" : ""}`}
               onClick={handleDebug}
               disabled={nodes.length === 0}
               title="Run in debug mode (D)"
@@ -302,11 +302,11 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
 
           <div className="toolbar-separator" />
           <button
-            className="theme-toggle"
+            className="toolbar-btn"
             onClick={toggleTheme}
             title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
           >
-            {theme === "dark" ? "☀" : "☾"}
+            {theme === "dark" ? "Dark Mode" : "Light Mode"}
           </button>
         </div>
         {/* 
@@ -380,7 +380,9 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
             <button onClick={() => closeMenuOnClick(handleShareUrl)}>{shareMsg || "Share"}</button>
             <button onClick={() => closeMenuOnClick(handleShowQr)}>QR</button>
             <div className="mobile-menu-separator"></div>
-            <button onClick={() => closeMenuOnClick(toggleTheme)}>{theme === "dark" ? "☀ Light" : "☾ Dark"}</button>
+            <button onClick={() => closeMenuOnClick(toggleTheme)}>
+              {theme === "dark" ? "Dark Mode" : "Light Mode"}
+            </button>
           </div>
         )}
       </div>
