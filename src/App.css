@@ -2301,7 +2301,7 @@ body {
   width: 10px;
   height: 10px;
   background: var(--sys-gray);
-  border: 2px solid var(--node-bg);
+  border: 3px double var(--node-bg);
   border-radius: 50%;
 }
 .react-flow__handle:hover {
