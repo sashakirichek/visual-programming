@@ -12,7 +12,7 @@ export default function QrCodeModal({ url, onClose }) {
         </div>
         <div className="modal-body qr-modal-body">
           <div className="qr-code-wrapper">
-            <QRCodeSVG value={url} size={256} />
+            <QRCodeSVG value={url} size={512} />
           </div>
         </div>
       </div>

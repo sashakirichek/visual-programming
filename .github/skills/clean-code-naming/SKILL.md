@@ -8,7 +8,6 @@ description:
 argument-hint: "[files, PR, or module to review]"
 user-invocable: true
 disable-model-invocation: true
-context: fork
 ---
 
 # Clean Code — Naming, Comments & Formatting Review

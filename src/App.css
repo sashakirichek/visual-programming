@@ -192,9 +192,10 @@ body {
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
+  color: var(--label-primary);
   border: 0; /*  1px solid var(--separator-opaque); */
   /* border-radius: var(--radius-sm); */
-  background: white;
+  background: var(--fill-tertiary);
   /* color: var(--label-secondary); */
   font-size: 14px;
   font-family: var(--font-mono);
