@@ -7,10 +7,16 @@ const NODE_TYPES = [
   { type: "operatorNode", label: "OP  Operator", color: "var(--sys-orange)", description: "Math/logic operator" },
   { type: "functionNode", label: "FN  Function", color: "var(--sys-green)", description: "Built-in function" },
   { type: "conditionNode", label: "IF  Condition", color: "var(--sys-yellow)", description: "If/else branch" },
+  { type: "apiNode", label: "API  API Query", color: "var(--sys-red)", description: "Fetch from external API" },
   { type: "loopNode", label: "LP  Loop", color: "var(--sys-indigo)", description: "Array iteration" },
   { type: "jsonNode", label: "JS  JSON", color: "var(--sys-pink)", description: "JSON operations" },
-  { type: "apiNode", label: "API  API Query", color: "var(--sys-red)", description: "Fetch from external API" },
-  { type: "scopeNode", label: "GRP  Group", color: "var(--sys-gray)", description: "Visual group / save as module" },
+  {
+    type: "scopeNode",
+    label: "GRP  Group",
+    color: "var(--sys-transparent)",
+    description: "Visual group / save as module",
+  },
+  { type: "textNode", label: "TX  Text", color: "var(--sys-transparent)", description: "Editable text box" },
 ];
 
 let nodeCounter = 0;
@@ -43,17 +49,20 @@ export default function NodePalette({ modules }) {
       nodeData.dragHandle = ".drag-handle";
       nodeData.data = { label: type, name: "", color: "var(--sys-gray)" };
     }
+    if (type === "textNode") {
+      nodeData.data = { text: "Text" };
+    }
+
     addNode(nodeData);
   };
-
   const handleLoadModule = (moduleName) => {
     loadModuleAsNodes(moduleName);
   };
 
   return (
     <div className="node-palette">
-      <div className="palette-section">
-        <div className="palette-title">Nodes</div>
+      <div className="panel">
+        <div className="panel-title">NODES</div>
         {NODE_TYPES.map(({ type, label, color, description }) => (
           <div
             key={type}

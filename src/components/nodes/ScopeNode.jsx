@@ -1,5 +1,6 @@
-import { NodeResizer } from "@xyflow/react";
+import { NodeResizer, Handle, Position } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 const GROUP_COLORS = [
   { label: "Gray", value: "var(--sys-gray)" },
@@ -16,13 +17,7 @@ export default function ScopeNode({ id, data, selected }) {
 
   return (
     <div className="group-node-container" style={{ borderColor: color }}>
-      <NodeResizer
-        minWidth={160}
-        minHeight={80}
-        isVisible={selected}
-        lineStyle={{ borderColor: color }}
-        handleStyle={{ width: 6, height: 6, borderRadius: 0, background: color }}
-      />
+      <ResizableNodeSelected resizeDirection={null} isVisible={selected} />
       <div className="group-header drag-handle">
         <span className="group-color-dot" style={{ background: color }} />
         <input

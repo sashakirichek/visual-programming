@@ -1,6 +1,7 @@
 import { Handle, Position } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { VALUE_TYPE_OPTIONS, formatValue, getValuePlaceholder } from "../../utils/valueUtils";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 export default function InputNode({ id, data, selected, width }) {
   const updateNodeData = useFlowStore((s) => s.updateNodeData);
@@ -13,6 +14,7 @@ export default function InputNode({ id, data, selected, width }) {
       className={`node input-node node-oneliner ${selected ? "selected" : ""}`}
       style={width ? { width } : undefined}
     >
+      <ResizableNodeSelected isVisible={selected} />
       <div className="node-header drag-handle">
         INPUT
         <select

@@ -87,45 +87,6 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
     setRightPanel(null);
   }, [nodes.length, edges.length, clearFlow, setRightPanel]);
 
-  useEffect(() => {
-    const handler = (e) => {
-      const tag = document.activeElement?.tagName?.toLowerCase();
-      if (tag === "input" || tag === "textarea" || tag === "select") return;
-
-      switch (e.key.toLowerCase()) {
-        case "n":
-          toggleLeft("palette");
-          break;
-        case "m":
-          toggleLeft("modules");
-          break;
-        case "p":
-          toggleRight("properties");
-          break;
-        case "e":
-          toggleLeft("examples");
-          break;
-        case "c":
-          toggleLeft("challenges");
-          break;
-        case "s":
-          toggleLeft("solutions");
-          break;
-        case "r":
-          handleRun();
-          break;
-        case "d":
-          debugMode ? handleStopDebug() : handleDebug();
-          break;
-        default:
-          return;
-      }
-      e.preventDefault();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [toggleLeft, toggleRight, handleRun, handleDebug, handleStopDebug, debugMode]);
-
   const buildShareUrl = useCallback(() => {
     const json = exportToJson();
     const encoded = btoa(unescape(encodeURIComponent(json)));
@@ -150,8 +111,10 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
   }, [buildShareUrl]);
 
   const handleShowQr = useCallback(() => {
-    setQrUrl(buildShareUrl());
-    setShowQr(true);
+    try {
+      setQrUrl(buildShareUrl());
+      setShowQr(true);
+    } catch {}
   }, [buildShareUrl]);
 
   const closeMenuOnClick = (action) => {
@@ -163,7 +126,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
     <>
       <div className="toolbar">
         <div className="toolbar-brand">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle
               cx="12"
               cy="12"
@@ -182,7 +145,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
             />
             <path d="M12 12L12 22" stroke="#f87204" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M12 2L18 12" stroke="#f87204" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+          </svg> */}
         </div>
 
         {/* Hamburger menu button - mobile only */}

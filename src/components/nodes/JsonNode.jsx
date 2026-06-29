@@ -1,11 +1,12 @@
-import { Handle, Position, useHandleConnections } from "@xyflow/react";
+import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { formatValue } from "../../utils/valueUtils";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 const JSON_OPS = ["parse", "stringify", "get", "set", "template"];
 
 function JsonInputRow({ id, data, updateNodeData, op }) {
-  const connections = useHandleConnections({ type: "target", id: "value" });
+  const connections = useNodeConnections({ type: "target", id: "value" });
   const connected = connections.length > 0;
   return (
     <div className="node-row" style={{ position: "relative" }}>
@@ -32,6 +33,7 @@ export default function JsonNode({ id, data, selected, width }) {
 
   return (
     <div className={`node json-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <ResizableNodeSelected isVisible={selected} />
       <div className="node-header drag-handle">
         JSON
         <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />

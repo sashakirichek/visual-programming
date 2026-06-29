@@ -12,6 +12,7 @@
     "test": "pnpm exec playwright test"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@tanstack/react-query": "^5.95.2",
     "@tanstack/react-table": "^8.21.3",
     "@xyflow/react": "^12.10.2",

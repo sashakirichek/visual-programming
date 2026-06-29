@@ -27,7 +27,7 @@ export default function ModulePanel() {
   };
 
   return (
-    <div className="module-panel">
+    <div className="panel">
       <div className="panel-title">MODULES</div>
 
       <div className="module-save-form">

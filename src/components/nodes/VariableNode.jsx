@@ -1,6 +1,7 @@
-import { Handle, Position, useHandleConnections } from "@xyflow/react";
+import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { VALUE_TYPE_OPTIONS, formatValue, getValuePlaceholder } from "../../utils/valueUtils";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 function ValueTypeRow({ id, data, updateNodeData }) {
   return (
@@ -22,7 +23,7 @@ function ValueTypeRow({ id, data, updateNodeData }) {
 }
 
 function ValueRow({ id, data, updateNodeData }) {
-  const connections = useHandleConnections({ type: "target", id: "value" });
+  const connections = useNodeConnections({ type: "target", id: "value" });
   const connected = connections.length > 0;
   const valueType = data.valueType || "literal";
   return (
@@ -48,6 +49,7 @@ export default function VariableNode({ id, data, selected, width }) {
 
   return (
     <div className={`node variable-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <ResizableNodeSelected isVisible={selected} />
       <div className="node-header drag-handle">
         VARIABLE
         <Handle type="source" position={Position.Right} id="value" className="nodrag" style={{ top: "50%" }} />

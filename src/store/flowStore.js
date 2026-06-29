@@ -17,6 +17,7 @@ const VALID_NODE_TYPES = new Set([
   "moduleNode",
   "scopeNode",
   "apiNode",
+  "textNode",
 ]);
 
 function sanitizeString(str) {
@@ -101,16 +102,18 @@ function sanitizeModules(modules) {
       if (!mod || typeof mod !== "object") return [];
 
       const safeName = sanitizeString(name);
-      return [[
-        safeName,
-        {
-          name: sanitizeString(mod.name || safeName),
-          description: sanitizeString(mod.description || ""),
-          nodes: sanitizeNodes(mod.nodes),
-          edges: sanitizeEdges(mod.edges),
-          ...(mod.createdAt ? { createdAt: sanitizeString(mod.createdAt) } : {}),
-        },
-      ]];
+      return [
+        [
+          safeName,
+          {
+            name: sanitizeString(mod.name || safeName),
+            description: sanitizeString(mod.description || ""),
+            nodes: sanitizeNodes(mod.nodes),
+            edges: sanitizeEdges(mod.edges),
+            ...(mod.createdAt ? { createdAt: sanitizeString(mod.createdAt) } : {}),
+          },
+        ],
+      ];
     }),
   );
 }

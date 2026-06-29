@@ -1,11 +1,12 @@
-import { Handle, Position, useHandleConnections } from "@xyflow/react";
+import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { formatValue } from "../../utils/valueUtils";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 const METHODS = ["GET", "POST", "PUT", "DELETE"];
 
 function BodyRow({ id, data, updateNodeData }) {
-  const connections = useHandleConnections({ type: "target", id: "body" });
+  const connections = useNodeConnections({ type: "target", id: "body" });
   const connected = connections.length > 0;
   return (
     <div className="node-row" style={{ position: "relative" }}>
@@ -31,6 +32,7 @@ export default function ApiNode({ id, data, selected, width }) {
 
   return (
     <div className={`node api-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <ResizableNodeSelected isVisible={selected} />
       <div className="node-header drag-handle">
         API
         <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />

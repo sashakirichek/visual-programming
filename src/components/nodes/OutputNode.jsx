@@ -1,6 +1,7 @@
-import { Handle, Position, useHandleConnections } from "@xyflow/react";
+import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { formatValue } from "../../utils/valueUtils";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 const DISPLAY_TYPES = ["inferred", "table", "gauge", "progress", "slider", "chart", "text"];
 
@@ -248,7 +249,7 @@ function renderViz(displayType, value, min, max, color) {
 }
 
 function OutputParamRow({ id, param, data, updateNodeData }) {
-  const connections = useHandleConnections({ type: "target", id: param.id });
+  const connections = useNodeConnections({ type: "target", id: param.id });
   const connected = connections.length > 0;
 
   return (
@@ -297,6 +298,7 @@ export default function OutputNode({ id, data, selected, width }) {
 
   return (
     <div className={`node output-node ${selected ? "selected" : ""}`}>
+      <ResizableNodeSelected isVisible={selected} />
       <Handle type="target" position={Position.Left} id="value" />
       <div className="node-header drag-handle">
         OUTPUT

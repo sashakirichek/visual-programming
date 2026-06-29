@@ -2,15 +2,19 @@
 
 A node-based visual programming environment built with React, [@xyflow/react](https://reactflow.dev), and TanStack.
 
-![Visual Programming UI](https://github.com/user-attachments/assets/326a23b5-f071-492a-8915-097dbaa9b803)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/image2.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/image.png">
+  <img alt="Visual Programming UI" src="docs/assets/image2.png">
+</picture>
 
 ## Features
 
 - **Node-based diagram** – drag, connect, and execute nodes visually using React Flow
 - **Execution engine** – supports all JS operators (`+`, `-`, `*`, `/`, `%`, `**`, `===`, `!==`, `>`, `<`, `>=`, `<=`, `&&`, `||`, `??`) and built-in functions (Math, String, Array, Object, JSON)
-- **Visual debugger** – step through execution, highlight active nodes, watch variables, view execution trace
+- **Visual debugger (DRAFT)** – step through execution, highlight active nodes, watch variables, view execution trace
 - **JSON support** – export the full flow to JSON, copy to clipboard, download, or import from a file
-- **Module system** – save the current flow as a reusable module and load it back into any flow
+- **Module system (DRAFT)** – save the current flow as a reusable module and load it back into any flow
 - **GitHub Actions coding agent** – label any issue with `approved-for-fix` to trigger the AI coding agent
 
 ## Node Types
@@ -54,12 +58,6 @@ To instruct the AI coding agent to fix an issue:
 1. Create a GitHub issue describing the bug or feature request
 2. Add the `approved-for-fix` label (only repository owners/maintainers can do this)
 3. The coding agent workflow will automatically trigger and open a pull request with the fix
-
-# Azure deploy notes (not implemented)
-
-## Build your app
-
-npm run build # Creates dist/ folder
 
 ## Create static web app (one-time)
 

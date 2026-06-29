@@ -1,10 +1,11 @@
-import { Handle, Position, useHandleConnections } from "@xyflow/react";
+import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { FUNCTION_META, CATEGORIES } from "../../data/functionMeta";
 import { formatValue, getClosureCount } from "../../utils/valueUtils";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 function ParamRow({ id, index, param, data, updateNodeData }) {
-  const connections = useHandleConnections({ type: "target", id: `arg${index}` });
+  const connections = useNodeConnections({ type: "target", id: `arg${index}` });
   const connected = connections.length > 0;
   const inputValue = data[`arg${index}`] || "";
   const isMultiline = param.isCallback || inputValue.includes("\n") || inputValue.length > 56;
@@ -35,7 +36,7 @@ function ParamRow({ id, index, param, data, updateNodeData }) {
 }
 
 function BindingRow({ id, index, data, updateNodeData, onRemove }) {
-  const connections = useHandleConnections({ type: "target", id: `bind${index}` });
+  const connections = useNodeConnections({ type: "target", id: `bind${index}` });
   const connected = connections.length > 0;
 
   return (
@@ -89,6 +90,7 @@ export default function FunctionNode({ id, data, selected, width }) {
 
   return (
     <div className={`node function-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <ResizableNodeSelected isVisible={selected} />
       {/* {params.length === 0 && !meta && (
         <Handle type="target" position={Position.Left} id="arg0" style={{ top: "50%" }} />
       )} */}

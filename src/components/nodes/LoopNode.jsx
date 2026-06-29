@@ -1,11 +1,12 @@
-import { Handle, Position, useHandleConnections } from "@xyflow/react";
+import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { formatValue } from "../../utils/valueUtils";
+import ResizableNodeSelected from "../ResizableNodeSelected";
 
 const LOOP_OPS = ["forEach", "map", "filter"];
 
 function ArrayRow({ id, data, updateNodeData }) {
-  const connections = useHandleConnections({ type: "target", id: "array" });
+  const connections = useNodeConnections({ type: "target", id: "array" });
   const connected = connections.length > 0;
   return (
     <div className="node-row" style={{ position: "relative" }}>
@@ -30,6 +31,7 @@ export default function LoopNode({ id, data, selected, width }) {
 
   return (
     <div className={`node loop-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
+      <ResizableNodeSelected isVisible={selected} />
       <div className="node-header drag-handle">
         LOOP
         <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />

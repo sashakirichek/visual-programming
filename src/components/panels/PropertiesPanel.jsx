@@ -11,7 +11,7 @@ export default function PropertiesPanel() {
   const node = nodes.find((n) => n.id === selectedNode);
   if (!node) {
     return (
-      <div className="properties-panel">
+      <div className="panel">
         <div className="panel-title">Properties</div>
         <div className="empty-message">Select a node to view properties</div>
       </div>
@@ -21,7 +21,7 @@ export default function PropertiesPanel() {
   const result = executionResults[node.id];
 
   return (
-    <div className="properties-panel">
+    <div className="panel">
       <div className="panel-title">Properties</div>
 
       <div className="prop-row">

@@ -14,6 +14,7 @@ import JsonNode from "./components/nodes/JsonNode";
 import ModuleNode from "./components/nodes/ModuleNode";
 import ScopeNode from "./components/nodes/ScopeNode";
 import ApiNode from "./components/nodes/ApiNode";
+import TextNode from "./components/nodes/TextNode";
 import NodePalette from "./components/panels/NodePalette";
 import DebugPanel from "./components/panels/DebugPanel";
 import ModulePanel from "./components/panels/ModulePanel";
@@ -36,7 +37,10 @@ const nodeTypes = {
   moduleNode: ModuleNode,
   scopeNode: ScopeNode,
   apiNode: ApiNode,
+  textNode: TextNode,
 };
+
+var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 
 export default function App() {
   const [leftPanel, setLeftPanel] = useState("palette");
@@ -57,7 +61,7 @@ export default function App() {
   const handleNodeClick = useCallback(
     (_, node) => {
       setSelectedNode(node.id);
-      setRightPanel("properties");
+      // setRightPanel("properties");
     },
     [setSelectedNode],
   );
@@ -201,7 +205,7 @@ export default function App() {
             snapGrid={[8, 8]}
             deleteKeyCode="Delete"
           >
-            <Background variant="dots" gap={16} size={1} color="#888" />
+            <Background variant="dots" gap={8} size={1} color={iOS ? "var(--bg-primary)" : "var(--fill-primary)"} />
             <Controls />
             {/* <MiniMap nodeStrokeWidth={1} /> */}
           </ReactFlow>

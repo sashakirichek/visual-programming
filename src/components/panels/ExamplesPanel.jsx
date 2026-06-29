@@ -9,7 +9,7 @@ export default function ExamplesPanel() {
   };
 
   return (
-    <div className="examples-panel">
+    <div className="panel">
       <div className="panel-title">EXAMPLES</div>
       {EXAMPLES.map((ex) => (
         <div key={ex.id} className="example-item">
