@@ -14,7 +14,7 @@ const NODE_TYPES = [
     type: "scopeNode",
     label: "GRP  Group",
     color: "var(--sys-transparent)",
-    description: "Visual group / save as module",
+    description: "Visual grouping",
   },
   { type: "textNode", label: "TX  Text", color: "var(--sys-transparent)", description: "Editable text box" },
 ];

@@ -43,7 +43,7 @@ const nodeTypes = {
 var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 
 export default function App() {
-  const [leftPanel, setLeftPanel] = useState("palette");
+  const [leftPanel, setLeftPanel] = useState(null);
   const [rightPanel, setRightPanel] = useState(null);
   const [urlImportMsg, setUrlImportMsg] = useState(null);
 
