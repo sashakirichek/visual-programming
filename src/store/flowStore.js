@@ -13,6 +13,8 @@ const VALID_NODE_TYPES = new Set([
   "variableNode",
   "conditionNode",
   "loopNode",
+  "forLoopNode",
+  "timerNode",
   "jsonNode",
   "moduleNode",
   "scopeNode",
@@ -168,6 +170,7 @@ export const useFlowStore = create((set, get) => ({
   isRunning: false,
   activeChallenge: null,
   challengeResults: null,
+  theme: typeof window !== "undefined" ? localStorage.getItem("vp-theme") || "dark" : "dark",
   vizNodes: [],
   vizEdges: [],
 
@@ -203,6 +206,14 @@ export const useFlowStore = create((set, get) => ({
   setDebugSteps: (steps) => set({ debugSteps: steps }),
 
   setIsRunning: (running) => set({ isRunning: running }),
+
+  setTheme: (theme) => {
+    if (typeof window !== "undefined") {
+      window.document.documentElement.setAttribute("data-theme", theme);
+      window.localStorage.setItem("vp-theme", theme);
+    }
+    set({ theme });
+  },
 
   clearResults: () => set({ executionResults: {}, consoleLogs: [] }),
 

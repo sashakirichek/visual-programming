@@ -67,3 +67,14 @@ az staticwebapps create --name my-app --resource-group my-rg --location eastus \
 ## Deploy
 
 az staticwebapp deploy --name my-app --build-folder dist
+
+## More visual programming inspiration
+
+Unreal Engine’s Blueprints
+![alt text](docs/assets/bpqs_6_step6.png)
+
+Blender
+![alt text](docs/assets/nodes_closure_external_input.png)
+
+LabView
+![alt text](docs/assets/Labview_code_example.png)

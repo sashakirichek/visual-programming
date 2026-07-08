@@ -9,7 +9,8 @@ import OperatorNode from "./components/nodes/OperatorNode";
 import FunctionNode from "./components/nodes/FunctionNode";
 import VariableNode from "./components/nodes/VariableNode";
 import ConditionNode from "./components/nodes/ConditionNode";
-import LoopNode from "./components/nodes/LoopNode";
+import ForLoopNode from "./components/nodes/ForLoopNode";
+import TimerNode from "./components/nodes/TimerNode";
 import JsonNode from "./components/nodes/JsonNode";
 import ModuleNode from "./components/nodes/ModuleNode";
 import ScopeNode from "./components/nodes/ScopeNode";
@@ -32,7 +33,8 @@ const nodeTypes = {
   functionNode: FunctionNode,
   variableNode: VariableNode,
   conditionNode: ConditionNode,
-  loopNode: LoopNode,
+  forLoopNode: ForLoopNode,
+  timerNode: TimerNode,
   jsonNode: JsonNode,
   moduleNode: ModuleNode,
   scopeNode: ScopeNode,

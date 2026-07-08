@@ -9,6 +9,8 @@ const NODE_TYPES = [
   { type: "conditionNode", label: "IF  Condition", color: "var(--sys-yellow)", description: "If/else branch" },
   { type: "apiNode", label: "API  API Query", color: "var(--sys-red)", description: "Fetch from external API" },
   { type: "loopNode", label: "LP  Loop", color: "var(--sys-indigo)", description: "Array iteration" },
+  { type: "forLoopNode", label: "FL  For", color: "var(--sys-indigo)", description: "For-loop control" },
+  { type: "timerNode", label: "TM  Timer", color: "var(--sys-cyan)", description: "Interval trigger" },
   { type: "jsonNode", label: "JS  JSON", color: "var(--sys-pink)", description: "JSON operations" },
   {
     type: "scopeNode",
@@ -42,6 +44,12 @@ export default function NodePalette({ modules }) {
     }
     if (type === "functionNode") {
       nodeData.data = { label: type, functionName: "", closureCount: 0 };
+    }
+    if (type === "forLoopNode") {
+      nodeData.data = { label: type, start: "0", condition: "i < 10", iteration: "i++", body: "i", closureCount: 0 };
+    }
+    if (type === "timerNode") {
+      nodeData.data = { label: type, interval: 1000, autoStart: false };
     }
     if (type === "scopeNode") {
       nodeData.style = { width: 400, height: 250 };

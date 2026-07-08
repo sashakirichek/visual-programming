@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { HomePage } from "./page-objects/homePage";
+import { ExamplesPage } from "./page-objects/examplesPage";
 
 test("has title", async ({ page }) => {
   const homePage = new HomePage(page);
@@ -82,6 +83,20 @@ test("json_node_persists_after_addition", async ({ page }) => {
   // Verify the node contains expected content
   const jsonNode = page.locator('[class*="react-node"]').filter({ hasText: /JSON/ });
   await expect(jsonNode).toBeVisible();
+});
+
+test("load_for_loop_example_from_examples_panel", async ({ page }) => {
+  const homePage = new HomePage(page);
+  const examplesPage = new ExamplesPage(page);
+  await homePage.navigateToHomePage();
+  await homePage.waitForPageToLoad();
+
+  await examplesPage.clickExamplesButton();
+  await examplesPage.verifyExamplesPanelIsVisible();
+  await examplesPage.clickExampleLoadButton("For Loop Example");
+
+  // Verify the forLoopNode appears on the canvas
+  await examplesPage.verifyCanvasContainsNode("FOR");
 });
 
 test("SolutionsPanel_isVisible", async ({ page }) => {

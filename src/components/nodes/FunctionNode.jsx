@@ -3,12 +3,14 @@ import { useFlowStore } from "../../store/flowStore";
 import { FUNCTION_META, CATEGORIES } from "../../data/functionMeta";
 import { formatValue, getClosureCount } from "../../utils/valueUtils";
 import ResizableNodeSelected from "../ResizableNodeSelected";
+import Editor from "@monaco-editor/react";
 
 function ParamRow({ id, index, param, data, updateNodeData }) {
   const connections = useNodeConnections({ type: "target", id: `arg${index}` });
   const connected = connections.length > 0;
   const inputValue = data[`arg${index}`] || "";
   const isMultiline = param.isCallback || inputValue.includes("\n") || inputValue.length > 56;
+  const isLightTheme = useFlowStore((s) => s.theme) === "light";
 
   return (
     <div className={`node-row${isMultiline ? " node-row-stack" : ""}`} style={{ position: "relative" }}>
@@ -16,13 +18,23 @@ function ParamRow({ id, index, param, data, updateNodeData }) {
       <span className="handle-label">{param.name}</span>
       {!connected &&
         (isMultiline ? (
-          <textarea
-            className={`node-textarea node-param-textarea${param.isCallback ? " callback-input" : ""}`}
-            rows={param.isCallback ? 4 : 3}
-            value={inputValue}
-            onChange={(e) => updateNodeData(id, { [`arg${index}`]: e.target.value })}
-            placeholder={param.isCallback ? param.desc || "(x) => x" : param.desc || "or connect"}
-          />
+          param.isCallback ? (
+            <Editor
+              height="120px"
+              theme={isLightTheme ? "vs-light" : "vs-dark"}
+              defaultLanguage="javascript"
+              defaultValue={inputValue}
+              onChange={(e) => updateNodeData(id, { [`arg${index}`]: e.target.value })}
+            />
+          ) : (
+            <textarea
+              className={`node-textarea node-param-textarea${param.isCallback ? " callback-input" : ""}`}
+              rows={param.isCallback ? 4 : 3}
+              value={inputValue}
+              onChange={(e) => updateNodeData(id, { [`arg${index}`]: e.target.value })}
+              placeholder={param.isCallback ? param.desc || "(x) => x" : param.desc || "or connect"}
+            />
+          )
         ) : (
           <input
             className="node-input small"
@@ -119,6 +131,7 @@ export default function FunctionNode({ id, data, selected, width }) {
         {params.map((p, i) => (
           <ParamRow key={i} id={id} index={i} param={p} data={data} updateNodeData={updateNodeData} />
         ))}
+
         {hasCallback && (
           <div className="closure-section">
             <div className="closure-toolbar">
