@@ -24,36 +24,63 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [qrUrl, setQrUrl] = useState("");
   const [shareMsg, setShareMsg] = useState("");
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("vp-theme") || "dark";
-  });
+  const theme = useFlowStore((s) => s.theme);
+  const setTheme = useFlowStore((s) => s.setTheme);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("vp-theme", theme);
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
-    setTheme((t) => (t === "dark" ? "light" : "dark"));
-  }, []);
+    setTheme(theme === "dark" ? "light" : "dark");
+  }, [setTheme, theme]);
 
   const toggleLeft = useCallback((panel) => setLeftPanel((p) => (p === panel ? null : panel)), [setLeftPanel]);
   const toggleRight = useCallback((panel) => setRightPanel((p) => (p === panel ? null : panel)), [setRightPanel]);
 
   const handleRun = useCallback(() => {
     if (isRunning || nodes.length === 0) return;
-    setIsRunning(true);
+    const timerNodes = nodes.filter((n) => n.type === "timerNode" && (n.data?.interval > 0 || n.data?.autoStart));
     setDebugMode(false);
-    executeGraph(nodes, edges)
-      .then((r) => {
-        setExecutionResults(r.results);
-        setConsoleLogs(r.logs || []);
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsRunning(false);
-      });
+
+    const runOnce = () => {
+      executeGraph(nodes, edges)
+        .then((r) => {
+          setExecutionResults(r.results);
+          setConsoleLogs(r.logs || []);
+        })
+        .catch(() => {});
+    };
+
+    if (timerNodes.length > 0) {
+      // Start repeating execution using the first timer node's interval (ms)
+      const intervalMs = Number(timerNodes[0].data?.interval) || 1000;
+      setIsRunning(true);
+      // run immediate then schedule
+      runOnce();
+      if (window._vp_timerId) clearInterval(window._vp_timerId);
+      window._vp_timerId = setInterval(runOnce, intervalMs);
+    } else {
+      setIsRunning(true);
+      executeGraph(nodes, edges)
+        .then((r) => {
+          setExecutionResults(r.results);
+          setConsoleLogs(r.logs || []);
+        })
+        .catch(() => {})
+        .finally(() => {
+          setIsRunning(false);
+        });
+    }
   }, [nodes, edges, isRunning, setIsRunning, setDebugMode, setExecutionResults]);
+
+  const handleStop = useCallback(() => {
+    if (window._vp_timerId) {
+      clearInterval(window._vp_timerId);
+      window._vp_timerId = null;
+    }
+    setIsRunning(false);
+  }, [setIsRunning]);
 
   const handleDebug = useCallback(() => {
     if (nodes.length === 0) return;
@@ -218,7 +245,11 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           >
             Run
           </button>
-
+          {isRunning && (
+            <button className="toolbar-btn" onClick={handleStop} title="Stop">
+              Stop
+            </button>
+          )}
           {debugMode ? (
             <button className="toolbar-btn" onClick={handleStopDebug} title="Stop debugging (D)">
               Stop

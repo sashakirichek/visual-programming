@@ -7,9 +7,9 @@ export default function TextNode({ id, data, selected }) {
 
   return (
     <div className={`plain-node ${selected ? "selected" : ""}`}>
-      <ResizableNodeSelected resizeDirection={null} color={selected ? "#fc55fc" : "transparent"} isVisible={selected} />
+      <ResizableNodeSelected color={selected ? "#fc55fc" : "transparent"} isVisible={selected} />
       <div className="drag-handle" style={{ padding: 0 }}>
-        <textarea
+        <input
           className="node-textarea"
           value={text}
           placeholder="Enter text"

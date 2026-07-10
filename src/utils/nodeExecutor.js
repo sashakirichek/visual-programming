@@ -168,6 +168,40 @@ function parseLambda(str, bindings = {}) {
   }
 }
 
+function compileLoopExpression(argNames, expr, bindings = {}) {
+  if (!expr || typeof expr !== "string") return null;
+  const trimmed = expr.trim();
+  if (!trimmed) return null;
+  try {
+    const bindNames = Object.keys(bindings);
+    const bindValues = Object.values(bindings);
+    const isStatement = /(^\s*return\b|[{};])/m.test(trimmed);
+    const body = isStatement ? `"use strict"; ${trimmed}` : `"use strict"; return (${trimmed});`;
+    const factory = new Function(...argNames, ...bindNames, body);
+    return (...args) => factory(...args, ...bindValues);
+  } catch {
+    return null;
+  }
+}
+
+function compileLoopIteration(expr, bindings = {}) {
+  if (!expr || typeof expr !== "string") return null;
+  const trimmed = expr.trim();
+  if (!trimmed) return null;
+  try {
+    const bindNames = Object.keys(bindings);
+    const bindValues = Object.values(bindings);
+    const mutationStyle = /(^|[^A-Za-z0-9_$])(i\+\+|\+\+i|i\s*[-+*\/%]?=)/.test(trimmed);
+    const body = mutationStyle
+      ? `"use strict"; let _i = i; ${trimmed}; return i;`
+      : `"use strict"; return (${trimmed});`;
+    const factory = new Function("i", "array", ...bindNames, body);
+    return (i, array) => factory(i, array, ...bindValues);
+  } catch {
+    return null;
+  }
+}
+
 function getIncomingValue(nodeId, handleId, nodes, edges, results) {
   const incomingEdge = edges.find(
     (e) => e.target === nodeId && (e.targetHandle === handleId || (!e.targetHandle && !handleId)),
@@ -327,21 +361,199 @@ async function executeNode(node, nodes, edges, results, logs) {
       const inputArr = arr !== undefined ? arr : parseLiteralValue(data.array);
       if (!Array.isArray(inputArr)) return `Error: Expected array, got ${typeof inputArr}`;
       const op = data.loopOp || "forEach";
-      const fn = parseLambda(data.transform);
-      if (op === "forEach") {
-        inputArr.forEach((item, i) => {
-          if (fn) {
-            const out = fn(item, i, inputArr);
-            if (out !== undefined) logs.push({ nodeId: node.id, value: out });
-          } else {
-            logs.push({ nodeId: node.id, value: item });
+
+      // Collect closure bindings if provided on the node (same semantics as functionNode)
+      const bindings = {};
+      const closureCount = getClosureCount(data);
+      for (let i = 0; i < closureCount; i++) {
+        const bindName = data[`bindName${i}`];
+        if (bindName) {
+          const bindVal = getIncomingValue(node.id, `bind${i}`, nodes, edges, results);
+          if (bindVal !== undefined) {
+            bindings[bindName] = bindVal;
+          } else if (data[`bind${i}`] !== undefined && data[`bind${i}`] !== "") {
+            bindings[bindName] = parseLiteralValue(data[`bind${i}`]);
           }
-        });
+        }
+      }
+
+      const fn = parseLambda(data.transform, bindings);
+      const startExpr = data.loopStart || "0";
+      const conditionExpr = data.loopCondition || "i < array.length";
+      const iterationExpr = data.loopIteration || "i++";
+      const startFn = compileLoopExpression(["i", "array"], startExpr);
+      const conditionFn = compileLoopExpression(["i", "array"], conditionExpr);
+      const iterationFn = compileLoopIteration(iterationExpr);
+
+      if (op === "forEach" || op === "for") {
+        if (op === "for") {
+          let i = 0;
+          if (startFn) {
+            try {
+              const maybeStart = startFn(i, inputArr);
+              if (typeof maybeStart === "number") i = maybeStart;
+            } catch (e) {
+              logs.push({ nodeId: node.id, value: `Loop start error: ${e.message}` });
+            }
+          }
+
+          while (true) {
+            let shouldContinue = true;
+            if (conditionFn) {
+              try {
+                shouldContinue = Boolean(conditionFn(i, inputArr));
+              } catch (e) {
+                logs.push({ nodeId: node.id, value: `Loop condition error: ${e.message}` });
+                break;
+              }
+            } else {
+              shouldContinue = i < inputArr.length;
+            }
+            if (!shouldContinue) break;
+
+            const item = inputArr[i];
+            if (fn) {
+              try {
+                const out = fn(item, i, inputArr);
+                if (out !== undefined) logs.push({ nodeId: node.id, value: out });
+              } catch (e) {
+                logs.push({ nodeId: node.id, value: `Loop callback error: ${e.message}` });
+              }
+            } else {
+              logs.push({ nodeId: node.id, value: item });
+            }
+
+            if (iterationFn) {
+              try {
+                const next = iterationFn(i, inputArr);
+                if (typeof next === "number") {
+                  i = next;
+                } else {
+                  i++;
+                }
+              } catch (e) {
+                logs.push({ nodeId: node.id, value: `Loop iteration error: ${e.message}` });
+                break;
+              }
+            } else {
+              i++;
+            }
+          }
+        } else {
+          for (let i = 0; i < inputArr.length; i++) {
+            const item = inputArr[i];
+            if (fn) {
+              try {
+                const out = fn(item, i, inputArr);
+                if (out !== undefined) logs.push({ nodeId: node.id, value: out });
+              } catch (e) {
+                logs.push({ nodeId: node.id, value: `Loop callback error: ${e.message}` });
+              }
+            } else {
+              logs.push({ nodeId: node.id, value: item });
+            }
+          }
+        }
         return inputArr;
       }
-      if (op === "map") return fn ? inputArr.map(fn) : inputArr.map((item) => item);
-      if (op === "filter") return fn ? inputArr.filter(fn) : inputArr.filter(Boolean);
+
+      if (op === "map") return fn ? inputArr.map((it, idx) => fn(it, idx, inputArr)) : inputArr.map((item) => item);
+      if (op === "filter") return fn ? inputArr.filter((it, idx) => fn(it, idx, inputArr)) : inputArr.filter(Boolean);
       return inputArr;
+    }
+
+    case "forLoopNode": {
+      const bindings = {};
+      const closureCount = getClosureCount(data);
+      for (let i = 0; i < closureCount; i++) {
+        const bindName = data[`bindName${i}`];
+        if (bindName) {
+          const bindVal = getIncomingValue(node.id, `bind${i}`, nodes, edges, results);
+          if (bindVal !== undefined) {
+            bindings[bindName] = bindVal;
+          } else if (data[`bind${i}`] !== undefined && data[`bind${i}`] !== "") {
+            bindings[bindName] = parseLiteralValue(data[`bind${i}`]);
+          }
+        }
+      }
+
+      const bodyFn = compileLoopExpression(["i"], data.body, bindings);
+      const startExpr = data.start || "0";
+      const conditionExpr = data.condition || "i < 10";
+      const iterationExpr = data.iteration || "i++";
+      const startFn = compileLoopExpression(["i"], startExpr, bindings);
+      const conditionFn = compileLoopExpression(["i"], conditionExpr, bindings);
+      const iterationFn = compileLoopIteration(iterationExpr, bindings);
+
+      let i = 0;
+      if (startFn) {
+        try {
+          const maybeStart = startFn(i);
+          if (typeof maybeStart === "number") i = maybeStart;
+        } catch (e) {
+          logs.push({ nodeId: node.id, value: `For-loop start error: ${e.message}` });
+        }
+      }
+
+      const outputs = [];
+      while (true) {
+        let shouldContinue = true;
+        if (conditionFn) {
+          try {
+            shouldContinue = Boolean(conditionFn(i));
+          } catch (e) {
+            logs.push({ nodeId: node.id, value: `For-loop condition error: ${e.message}` });
+            break;
+          }
+        }
+        if (!shouldContinue) break;
+
+        if (bodyFn) {
+          try {
+            const out = bodyFn(i);
+            if (out !== undefined) outputs.push(out);
+          } catch (e) {
+            logs.push({ nodeId: node.id, value: `For-loop body error: ${e.message}` });
+            break;
+          }
+        }
+
+        if (iterationFn) {
+          try {
+            const next = iterationFn(i);
+            if (typeof next === "number") {
+              i = next;
+            } else {
+              i++;
+            }
+          } catch (e) {
+            logs.push({ nodeId: node.id, value: `For-loop iteration error: ${e.message}` });
+            break;
+          }
+        } else {
+          i++;
+        }
+      }
+
+      // If no outputs were produced, return bound closure values so mutations are visible.
+      if (closureCount > 0) {
+        if (closureCount === 1) {
+          const bindName = data[`bindName0`];
+          if (bindName) {
+            return getIncomingValue(node.id, `bind0`, nodes, edges, results);
+          }
+        }
+        const returnValues = {};
+        for (let j = 0; j < closureCount; j++) {
+          const bindName = data[`bindName${j}`];
+          if (bindName) {
+            const bindVal = getIncomingValue(node.id, `bind${j}`, nodes, edges, results);
+            returnValues[bindName] = bindVal;
+          }
+        }
+        return returnValues;
+      }
+      return outputs;
     }
 
     case "jsonNode": {
@@ -454,6 +666,12 @@ async function executeNode(node, nodes, edges, results, logs) {
       } catch (e) {
         return `Error: ${e.message}`;
       }
+    }
+
+    case "timerNode": {
+      // Timer node produces a tick value (timestamp). The repeating behavior
+      // is driven by the UI/Toolbar which calls executeGraph on an interval.
+      return Date.now();
     }
 
     default:

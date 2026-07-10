@@ -2,27 +2,56 @@ import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { FUNCTION_META, CATEGORIES } from "../../data/functionMeta";
 import { formatValue, getClosureCount } from "../../utils/valueUtils";
+import { getHandleColor } from "../../utils/typeChecker";
 import ResizableNodeSelected from "../ResizableNodeSelected";
+import Editor from "@monaco-editor/react";
 
 function ParamRow({ id, index, param, data, updateNodeData }) {
   const connections = useNodeConnections({ type: "target", id: `arg${index}` });
   const connected = connections.length > 0;
   const inputValue = data[`arg${index}`] || "";
   const isMultiline = param.isCallback || inputValue.includes("\n") || inputValue.length > 56;
+  const isLightTheme = useFlowStore((s) => s.theme) === "light";
+  const paramType = param.type || "any";
 
   return (
     <div className={`node-row${isMultiline ? " node-row-stack" : ""}`} style={{ position: "relative" }}>
-      <Handle type="target" position={Position.Left} id={`arg${index}`} style={{ top: "50%", marginLeft: "-10px" }} />
+      <Handle
+        type="target"
+        position={Position.Left}
+        id={`arg${index}`}
+        style={{ top: "50%", marginLeft: "-10px", backgroundColor: getHandleColor(paramType) }}
+        data-type={paramType}
+      />
       <span className="handle-label">{param.name}</span>
       {!connected &&
         (isMultiline ? (
-          <textarea
-            className={`node-textarea node-param-textarea${param.isCallback ? " callback-input" : ""}`}
-            rows={param.isCallback ? 4 : 3}
-            value={inputValue}
-            onChange={(e) => updateNodeData(id, { [`arg${index}`]: e.target.value })}
-            placeholder={param.isCallback ? param.desc || "(x) => x" : param.desc || "or connect"}
-          />
+          param.isCallback ? (
+            <Editor
+              height="120px"
+              theme={isLightTheme ? "vs-light" : "vs-dark"}
+              defaultLanguage="javascript"
+              defaultValue={inputValue}
+              onChange={(e) => updateNodeData(id, { [`arg${index}`]: e.target.value })}
+              options={{
+                lineNumbers: "off",
+                glyphMargin: false,
+                folding: false,
+                // Undocumented see https://github.com/Microsoft/vscode/issues/30795#issuecomment-410998882
+                lineDecorationsWidth: 0,
+                lineNumbersMinChars: 0,
+                minimap: { enabled: false },
+              }}
+            />
+          ) : (
+            <textarea
+              className={`node-textarea node-param-textarea${param.isCallback ? " callback-input" : ""}`}
+              rows={param.isCallback ? 4 : 3}
+              value={inputValue}
+              onChange={(e) => updateNodeData(id, { [`arg${index}`]: e.target.value })}
+              placeholder={param.isCallback ? param.desc || "(x) => x" : param.desc || "or connect"}
+            />
+          )
         ) : (
           <input
             className="node-input small"
@@ -41,7 +70,13 @@ function BindingRow({ id, index, data, updateNodeData, onRemove }) {
 
   return (
     <div className="node-row" style={{ position: "relative" }}>
-      <Handle type="target" position={Position.Left} id={`bind${index}`} style={{ top: "50%", marginLeft: "-10px" }} />
+      <Handle
+        type="target"
+        position={Position.Left}
+        id={`bind${index}`}
+        style={{ top: "50%", marginLeft: "-10px", backgroundColor: getHandleColor("any") }}
+        data-type="any"
+      />
       <input
         className="node-input small"
         style={{ maxWidth: 68 }}
@@ -87,6 +122,7 @@ export default function FunctionNode({ id, data, selected, width }) {
   const params = meta?.params || [];
   const hasCallback = params.some((p) => p.isCallback);
   const closureCount = hasCallback ? getClosureCount(data) : 0;
+  const outputType = meta?.outputType || "any";
 
   return (
     <div className={`node function-node ${selected ? "selected" : ""}`} style={width ? { width } : undefined}>
@@ -96,7 +132,14 @@ export default function FunctionNode({ id, data, selected, width }) {
       )} */}
       <div className="node-header drag-handle">
         FUNCTION
-        <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />
+        <Handle
+          type="source"
+          position={Position.Right}
+          id="result"
+          className="nodrag"
+          style={{ top: "50%", backgroundColor: getHandleColor(outputType) }}
+          data-type={outputType}
+        />
       </div>
       <div className="node-body">
         <select
@@ -119,6 +162,7 @@ export default function FunctionNode({ id, data, selected, width }) {
         {params.map((p, i) => (
           <ParamRow key={i} id={id} index={i} param={p} data={data} updateNodeData={updateNodeData} />
         ))}
+
         {hasCallback && (
           <div className="closure-section">
             <div className="closure-toolbar">
