@@ -1384,19 +1384,22 @@ body {
   width: 6px;
   height: 6px;
   flex-shrink: 0;
+  margin: 3px;
 }
 .group-name-input {
   background: transparent;
   border: none;
   color: var(--label-tertiary);
-  font-size: 9px;
+  font-size: var(--font-size-medium);
   font-family: var(--font-mono);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  min-width: 100px;
+  min-width: 200px;
+  width: 100%;
+  padding: 5px 0;
+  display: block;
   outline: none;
-  padding: 0;
 }
 .group-name-input::placeholder {
   color: var(--label-quaternary);
@@ -1404,7 +1407,7 @@ body {
 .group-color-select {
   background: transparent;
   border: 1px solid var(--separator-opaque);
-  color: var(--label-quaternary);
+  color: var(--label-secondary);
   font-size: 8px;
   font-family: var(--font-mono);
   padding: 0px 3px;

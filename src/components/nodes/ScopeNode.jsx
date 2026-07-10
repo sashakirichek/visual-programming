@@ -17,28 +17,34 @@ export default function ScopeNode({ id, data, selected }) {
   const color = data.color || "var(--sys-gray)";
 
   return (
-    <div className="group-node-container" style={{ borderColor: color, backgroundColor: setOpacity(color, 0.06) }}>
-      <ResizableNodeSelected resizeDirection={undefined} isVisible={selected} />
-      <div className="group-header drag-handle">
-        <span className="group-color-dot" style={{ background: color }} />
-        <input
-          className="group-name-input nodrag"
-          value={data.name || ""}
-          onChange={(e) => updateNodeData(id, { name: e.target.value })}
-          placeholder="label"
-        />
-        <select
-          className="group-color-select nodrag"
-          value={color}
-          onChange={(e) => updateNodeData(id, { color: e.target.value })}
-        >
-          {GROUP_COLORS.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
+    <>
+      <input
+        className="group-name-input nodrag"
+        style={{ color: setOpacity(color, 0.5) }}
+        value={data.name || ""}
+        onChange={(e) => updateNodeData(id, { name: e.target.value })}
+        placeholder={selected ? "label" : ""}
+      />
+      <div className="group-node-container" style={{ borderColor: color, backgroundColor: setOpacity(color, 0.06) }}>
+        <ResizableNodeSelected resizeDirection={undefined} isVisible={selected} />
+        <div className="group-header drag-handle" style={{ backgroundColor: setOpacity(color, 0.1) }}>
+          <span className="group-color-dot" style={{ background: color }} />
+
+          {selected ? (
+            <select
+              className="group-color-select nodrag"
+              value={color}
+              onChange={(e) => updateNodeData(id, { color: e.target.value })}
+            >
+              {GROUP_COLORS.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          ) : null}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
