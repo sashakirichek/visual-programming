@@ -777,4 +777,68 @@ export const EXAMPLES = [
       modules: {},
     },
   },
+  {
+    id: "type-mismatch-demo",
+    title: "Type Mismatch Demo",
+    difficulty: "easy",
+    description: "Learn how type validation works. Connect a string input to map() to see type error visualization.",
+    tags: ["types", "error-handling", "learning"],
+    flow: {
+      nodes: [
+        {
+          id: "in1",
+          type: "inputNode",
+          position: { x: 50, y: 100 },
+          data: { label: "inputNode", value: "hello", valueType: "literal" },
+        },
+        {
+          id: "in2",
+          type: "inputNode",
+          position: { x: 50, y: 220 },
+          data: { label: "inputNode", value: "[1,2,3]", valueType: "literal" },
+        },
+        {
+          id: "fn1",
+          type: "functionNode",
+          position: { x: 300, y: 150 },
+          data: { 
+            label: "functionNode", 
+            functionName: "map", 
+            arg0: "", 
+            arg1: "(x) => x * 2",
+            arg2: "", 
+            arg3: "" 
+          },
+        },
+        { id: "out1", type: "outputNode", position: { x: 550, y: 150 }, data: { label: "outputNode" } },
+      ],
+      edges: [
+        {
+          id: "e1-invalid",
+          source: "in1",
+          sourceHandle: "value",
+          target: "fn1",
+          targetHandle: "arg0",
+          animated: true,
+        },
+        {
+          id: "e2-valid",
+          source: "in2",
+          sourceHandle: "value",
+          target: "fn1",
+          targetHandle: "arg0",
+          animated: true,
+        },
+        {
+          id: "e3",
+          source: "fn1",
+          sourceHandle: "result",
+          target: "out1",
+          targetHandle: "value",
+          animated: true,
+        },
+      ],
+      modules: {},
+    },
+  },
 ];

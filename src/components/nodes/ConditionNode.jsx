@@ -1,14 +1,21 @@
 import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { formatValue } from "../../utils/valueUtils";
+import { getHandleColor } from "../../utils/typeChecker";
 import ResizableNodeSelected from "../ResizableNodeSelected";
 
-function CondRow({ id, handleId, label, dataKey, data, updateNodeData, placeholder }) {
+function CondRow({ id, handleId, label, dataKey, data, updateNodeData, placeholder, type }) {
   const connections = useNodeConnections({ type: "target", id: handleId });
   const connected = connections.length > 0;
   return (
     <div className="node-row" style={{ position: "relative" }}>
-      <Handle type="target" position={Position.Left} id={handleId} style={{ top: "50%", marginLeft: "-10px" }} />
+      <Handle
+        type="target"
+        position={Position.Left}
+        id={handleId}
+        style={{ top: "50%", marginLeft: "-10px", backgroundColor: getHandleColor(type) }}
+        data-type={type}
+      />
       <span className="handle-label">{label}</span>
       {!connected && (
         <input
@@ -32,7 +39,14 @@ export default function ConditionNode({ id, data, selected, width }) {
       <ResizableNodeSelected isVisible={selected} />
       <div className="node-header drag-handle">
         CONDITION
-        <Handle type="source" position={Position.Right} id="result" className="nodrag" style={{ top: "50%" }} />
+        <Handle
+          type="source"
+          position={Position.Right}
+          id="result"
+          className="nodrag"
+          style={{ top: "50%", backgroundColor: getHandleColor("any") }}
+          data-type="any"
+        />
       </div>
       <div className="node-body">
         <CondRow
@@ -43,6 +57,7 @@ export default function ConditionNode({ id, data, selected, width }) {
           data={data}
           updateNodeData={updateNodeData}
           placeholder="or connect"
+          type="boolean"
         />
         <CondRow
           id={id}
@@ -52,6 +67,7 @@ export default function ConditionNode({ id, data, selected, width }) {
           data={data}
           updateNodeData={updateNodeData}
           placeholder="true value"
+          type="any"
         />
         <CondRow
           id={id}
@@ -61,6 +77,7 @@ export default function ConditionNode({ id, data, selected, width }) {
           data={data}
           updateNodeData={updateNodeData}
           placeholder="false value"
+          type="any"
         />
         {result !== undefined && <div className="node-result">{formatValue(result)}</div>}
       </div>

@@ -2,6 +2,7 @@ import { Handle, Position, useNodeConnections } from "@xyflow/react";
 import { useState, useEffect, useRef } from "react";
 import { useFlowStore } from "../../store/flowStore";
 import { formatValue, getClosureCount } from "../../utils/valueUtils";
+import { getHandleColor } from "../../utils/typeChecker";
 import ResizableNodeSelected from "../ResizableNodeSelected";
 
 const DEFAULTS = {
@@ -44,7 +45,13 @@ export default function ForLoopNode({ id, data, selected, width }) {
 
     return (
       <div className="node-row" style={{ position: "relative" }}>
-        <Handle type="target" position={Position.Left} id={`bind${index}`} style={{ top: "50%", marginLeft: "-10px" }} />
+        <Handle
+          type="target"
+          position={Position.Left}
+          id={`bind${index}`}
+          style={{ top: "50%", marginLeft: "-10px", backgroundColor: getHandleColor("any") }}
+          data-type="any"
+        />
         <input
           ref={nameRef}
           className="node-input small"

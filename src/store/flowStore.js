@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { addEdge, applyNodeChanges, applyEdgeChanges } from "@xyflow/react";
+import { validateConnection } from "../utils/typeChecker";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -157,6 +158,32 @@ function persistGraphState(state) {
 
 const persistedGraphState = loadPersistedGraphState();
 
+// Validate all edges on initialization
+function validateAllEdges(nodes, edges) {
+  const errors = {};
+  edges.forEach((edge) => {
+    const validation = validateConnection(
+      edge.source,
+      edge.sourceHandle,
+      edge.target,
+      edge.targetHandle,
+      nodes,
+      edges,
+      {},
+    );
+    const edgeId = `${edge.source}-${edge.target}-${edge.sourceHandle || ""}-${edge.targetHandle || ""}`;
+    if (!validation.valid) {
+      errors[edgeId] = validation.error;
+    }
+  });
+  return errors;
+}
+
+const initialValidationErrors = validateAllEdges(
+  persistedGraphState.nodes,
+  persistedGraphState.edges,
+);
+
 export const useFlowStore = create((set, get) => ({
   nodes: persistedGraphState.nodes,
   edges: persistedGraphState.edges,
@@ -164,6 +191,7 @@ export const useFlowStore = create((set, get) => ({
   modules: persistedGraphState.modules,
   executionResults: {},
   consoleLogs: [],
+  edgeValidationErrors: initialValidationErrors, // Track which edges have type errors
   debugMode: false,
   debugStep: 0,
   debugSteps: [],
@@ -178,7 +206,39 @@ export const useFlowStore = create((set, get) => ({
 
   onEdgesChange: (changes) => set((state) => ({ edges: applyEdgeChanges(changes, state.edges) })),
 
-  onConnect: (connection) => set((state) => ({ edges: addEdge({ ...connection, animated: true }, state.edges) })),
+  onConnect: (connection) =>
+    set((state) => {
+      // Validate connection types
+      const validation = validateConnection(
+        connection.source,
+        connection.sourceHandle,
+        connection.target,
+        connection.targetHandle,
+        state.nodes,
+        state.edges,
+        state.executionResults,
+      );
+
+      const edgeId = `${connection.source}-${connection.target}-${connection.sourceHandle || ""}-${connection.targetHandle || ""}`;
+      const edgeData = { 
+        ...connection, 
+        animated: true,
+        ...(validation.valid ? {} : { data: { isInvalid: true, errorMessage: validation.error } })
+      };
+      const newEdges = addEdge(edgeData, state.edges);
+      const newErrors = { ...state.edgeValidationErrors };
+
+      if (!validation.valid) {
+        newErrors[edgeId] = validation.error;
+      } else {
+        delete newErrors[edgeId];
+      }
+
+      return {
+        edges: newEdges,
+        edgeValidationErrors: newErrors,
+      };
+    }),
 
   addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
 
@@ -224,6 +284,7 @@ export const useFlowStore = create((set, get) => ({
       selectedNode: null,
       executionResults: {},
       consoleLogs: [],
+      edgeValidationErrors: {},
       debugMode: false,
       debugStep: 0,
       debugSteps: [],

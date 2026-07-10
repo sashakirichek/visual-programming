@@ -414,6 +414,8 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-size: var(--font-size-small);
   transition: box-shadow 0.15s;
+  width: 100%;
+  height: 100%;
 }
 .node.selected {
   border-color: var(--accent-selected);
@@ -2255,6 +2257,20 @@ body {
 .react-flow__edge.animated .react-flow__edge-path {
   stroke: var(--sys-gray);
 }
+
+/* Invalid connection styling */
+.react-flow__edge.invalid .react-flow__edge-path {
+  stroke: #ff6b6b;
+  stroke-width: 2;
+  stroke-dasharray: 5, 5;
+}
+.react-flow__edge.invalid .react-flow__edge-label {
+  background-color: #ff6b6b;
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
 .react-flow__handle {
   width: 10px;
   height: 10px;
@@ -2264,4 +2280,61 @@ body {
 }
 .react-flow__handle:hover {
   background: var(--accent);
+}
+
+/* Type-specific handle colors */
+.react-flow__handle[data-type="number"] {
+  background: #ffb84d;
+}
+.react-flow__handle[data-type="number"]:hover {
+  background: #ffc66d;
+}
+
+.react-flow__handle[data-type="string"] {
+  background: #7cb342;
+}
+.react-flow__handle[data-type="string"]:hover {
+  background: #9ccc65;
+}
+
+.react-flow__handle[data-type="array"] {
+  background: #42a5f5;
+}
+.react-flow__handle[data-type="array"]:hover {
+  background: #64b5f6;
+}
+
+.react-flow__handle[data-type="object"] {
+  background: #ab47bc;
+}
+.react-flow__handle[data-type="object"]:hover {
+  background: #ba68c8;
+}
+
+.react-flow__handle[data-type="boolean"] {
+  background: #ef5350;
+}
+.react-flow__handle[data-type="boolean"]:hover {
+  background: #e57373;
+}
+
+.react-flow__handle[data-type="map"] {
+  background: #29b6f6;
+}
+.react-flow__handle[data-type="map"]:hover {
+  background: #4fc3f7;
+}
+
+.react-flow__handle[data-type="set"] {
+  background: #66bb6a;
+}
+.react-flow__handle[data-type="set"]:hover {
+  background: #81c784;
+}
+
+/* Invalid connection indicator */
+.react-flow__handle.invalid {
+  background: #ff6b6b !important;
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
 }

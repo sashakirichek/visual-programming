@@ -298,7 +298,7 @@ export default function OutputNode({ id, data, selected, width }) {
 
   return (
     <div className={`node output-node ${selected ? "selected" : ""}`}>
-      <ResizableNodeSelected isVisible={selected} />
+      <ResizableNodeSelected isVisible={selected} resizeDirection={undefined} />
       <Handle type="target" position={Position.Left} id="value" />
       <div className="node-header drag-handle">
         OUTPUT

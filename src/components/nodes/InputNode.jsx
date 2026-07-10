@@ -1,6 +1,7 @@
 import { Handle, Position } from "@xyflow/react";
 import { useFlowStore } from "../../store/flowStore";
 import { VALUE_TYPE_OPTIONS, formatValue, getValuePlaceholder } from "../../utils/valueUtils";
+import { getHandleColor } from "../../utils/typeChecker";
 import ResizableNodeSelected from "../ResizableNodeSelected";
 
 export default function InputNode({ id, data, selected, width }) {
@@ -8,6 +9,24 @@ export default function InputNode({ id, data, selected, width }) {
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
   const valueType = data.valueType || "literal";
+  
+  // Map valueType to type for handle color
+  const getOutputType = () => {
+    if (valueType === "map") return "map";
+    if (valueType === "set") return "set";
+    // Try to infer from value for literals
+    if (valueType === "literal") {
+      const value = data.value?.toString().toLowerCase();
+      if (value === "true" || value === "false") return "boolean";
+      if (!isNaN(parseFloat(value))) return "number";
+      if (value?.startsWith("[")) return "array";
+      if (value?.startsWith("{")) return "object";
+      return "string";
+    }
+    return "any";
+  };
+  
+  const outputType = getOutputType();
 
   return (
     <div
@@ -35,7 +54,14 @@ export default function InputNode({ id, data, selected, width }) {
           onChange={(e) => updateNodeData(id, { value: e.target.value })}
           placeholder={getValuePlaceholder(valueType)}
         />
-        <Handle type="source" position={Position.Right} id="value" className="nodrag" style={{ top: "50%" }} />
+        <Handle
+          type="source"
+          position={Position.Right}
+          id="value"
+          className="nodrag"
+          style={{ top: "50%", backgroundColor: getHandleColor(outputType) }}
+          data-type={outputType}
+        />
       </div>
       {result !== undefined && <div className="node-result">{formatValue(result)}</div>}
     </div>

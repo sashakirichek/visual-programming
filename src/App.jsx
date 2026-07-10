@@ -1,8 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { ReactFlow, Background, Controls, MiniMap, reconnectEdge } from "@xyflow/react";
+import { ReactFlow, Background, Controls, MiniMap } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import { useFlowStore } from "./store/flowStore";
+import { NotificationProvider, useNotification } from "./context/NotificationContext";
+import NotificationContainer from "./components/NotificationContainer";
 import InputNode from "./components/nodes/InputNode";
 import OutputNode from "./components/nodes/OutputNode";
 import OperatorNode from "./components/nodes/OperatorNode";
@@ -44,21 +46,41 @@ const nodeTypes = {
 
 var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 
-export default function App() {
+function AppContent() {
   const [leftPanel, setLeftPanel] = useState(null);
   const [rightPanel, setRightPanel] = useState(null);
   const [urlImportMsg, setUrlImportMsg] = useState(null);
+  const { addNotification } = useNotification();
 
   const nodes = useFlowStore((s) => s.nodes);
   const edges = useFlowStore((s) => s.edges);
   const onNodesChange = useFlowStore((s) => s.onNodesChange);
   const onEdgesChange = useFlowStore((s) => s.onEdgesChange);
-  const onConnect = useFlowStore((s) => s.onConnect);
+  const onConnectRaw = useFlowStore((s) => s.onConnect);
   const setSelectedNode = useFlowStore((s) => s.setSelectedNode);
   const modules = useFlowStore((s) => s.modules);
   const debugMode = useFlowStore((s) => s.debugMode);
   const debugStep = useFlowStore((s) => s.debugStep);
   const debugSteps = useFlowStore((s) => s.debugSteps);
+
+  // Wrap onConnect to show notifications for invalid connections
+  const onConnect = useCallback(
+    (connection) => {
+      onConnectRaw(connection);
+
+      // Check if this connection resulted in an error
+      const state = useFlowStore.getState();
+      const edgeId = `${connection.source}-${connection.target}-${connection.sourceHandle || ""}-${connection.targetHandle || ""}`;
+      const error = state.edgeValidationErrors[edgeId];
+
+      if (error) {
+        addNotification(`⚠️ ${error}`, "error", 4000);
+      } else {
+        addNotification("✓ Connection successful", "success", 2000);
+      }
+    },
+    [onConnectRaw, addNotification],
+  );
 
   const handleNodeClick = useCallback(
     (_, node) => {
@@ -132,6 +154,18 @@ export default function App() {
     return baseNode;
   });
 
+  // Mark invalid edges with className
+  const edgeValidationErrors = useFlowStore((s) => s.edgeValidationErrors);
+  const styledEdges = edges.map((edge) => {
+    const edgeId = `${edge.source}-${edge.target}-${edge.sourceHandle || ""}-${edge.targetHandle || ""}`;
+    const isInvalid = edgeValidationErrors[edgeId];
+
+    return {
+      ...edge,
+      className: isInvalid ? "invalid" : "",
+    };
+  });
+
   const edgeReconnectSuccessful = useRef(true);
 
   const onReconnectStart = useCallback(() => {
@@ -141,8 +175,11 @@ export default function App() {
   const onReconnect = useCallback((oldEdge, newConnection) => {
     edgeReconnectSuccessful.current = true;
     const store = useFlowStore.getState();
-    const newEdges = reconnectEdge(oldEdge, newConnection, store.edges);
-    useFlowStore.setState({ edges: newEdges });
+    // Remove old edge and add new connection with validation
+    const edgesWithoutOld = store.edges.filter((e) => e.id !== oldEdge.id);
+    useFlowStore.setState({ edges: edgesWithoutOld });
+    // Use the onConnect action to validate the new connection
+    store.onConnect(newConnection);
   }, []);
 
   const onReconnectEnd = useCallback((_, edge) => {
@@ -192,7 +229,7 @@ export default function App() {
         <div className="flow-container">
           <ReactFlow
             nodes={styledNodes}
-            edges={edges}
+            edges={styledEdges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
@@ -225,6 +262,15 @@ export default function App() {
           </div>
         )}
       </div>
+      <NotificationContainer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <NotificationProvider>
+      <AppContent />
+    </NotificationProvider>
   );
 }
