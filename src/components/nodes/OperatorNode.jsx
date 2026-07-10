@@ -36,13 +36,13 @@ export default function OperatorNode({ id, data, selected, width }) {
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
   const operator = data.operator || "+";
-  
+
   // Determine output type based on operator
   const getOutputType = () => {
     if (["===", "!==", ">", "<", ">=", "<=", "&&", "||"].includes(operator)) return "boolean";
     return "number"; // Math operators return numbers
   };
-  
+
   const outputType = getOutputType();
 
   return (

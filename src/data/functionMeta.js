@@ -1,7 +1,7 @@
 /**
  * Metadata for all available functions — parameter names, descriptions, callback flags, and types.
  * Used by FunctionNode to display meaningful labels instead of Arg0/Arg1/Arg2/Arg3.
- * 
+ *
  * Type system:
  * - params[i].type: expected input type ('number', 'string', 'array', 'object', 'any', 'boolean', 'map', 'set')
  * - outputType: return value type
@@ -9,21 +9,96 @@
 
 export const FUNCTION_META = {
   // === Math ===
-  abs: { cat: "Math", desc: "Absolute value", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  ceil: { cat: "Math", desc: "Round up", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  floor: { cat: "Math", desc: "Round down", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  round: { cat: "Math", desc: "Round to nearest", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  sqrt: { cat: "Math", desc: "Square root", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  cbrt: { cat: "Math", desc: "Cube root", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  log: { cat: "Math", desc: "Natural logarithm", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  log2: { cat: "Math", desc: "Base-2 logarithm", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  log10: { cat: "Math", desc: "Base-10 logarithm", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  sin: { cat: "Math", desc: "Sine (radians)", outputType: "number", params: [{ name: "angle", desc: "Radians", type: "number" }] },
-  cos: { cat: "Math", desc: "Cosine (radians)", outputType: "number", params: [{ name: "angle", desc: "Radians", type: "number" }] },
-  tan: { cat: "Math", desc: "Tangent (radians)", outputType: "number", params: [{ name: "angle", desc: "Radians", type: "number" }] },
-  asin: { cat: "Math", desc: "Arcsine", outputType: "number", params: [{ name: "value", desc: "-1..1", type: "number" }] },
-  acos: { cat: "Math", desc: "Arccosine", outputType: "number", params: [{ name: "value", desc: "-1..1", type: "number" }] },
-  atan: { cat: "Math", desc: "Arctangent", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
+  abs: {
+    cat: "Math",
+    desc: "Absolute value",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  ceil: {
+    cat: "Math",
+    desc: "Round up",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  floor: {
+    cat: "Math",
+    desc: "Round down",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  round: {
+    cat: "Math",
+    desc: "Round to nearest",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  sqrt: {
+    cat: "Math",
+    desc: "Square root",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  cbrt: {
+    cat: "Math",
+    desc: "Cube root",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  log: {
+    cat: "Math",
+    desc: "Natural logarithm",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  log2: {
+    cat: "Math",
+    desc: "Base-2 logarithm",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  log10: {
+    cat: "Math",
+    desc: "Base-10 logarithm",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  sin: {
+    cat: "Math",
+    desc: "Sine (radians)",
+    outputType: "number",
+    params: [{ name: "angle", desc: "Radians", type: "number" }],
+  },
+  cos: {
+    cat: "Math",
+    desc: "Cosine (radians)",
+    outputType: "number",
+    params: [{ name: "angle", desc: "Radians", type: "number" }],
+  },
+  tan: {
+    cat: "Math",
+    desc: "Tangent (radians)",
+    outputType: "number",
+    params: [{ name: "angle", desc: "Radians", type: "number" }],
+  },
+  asin: {
+    cat: "Math",
+    desc: "Arcsine",
+    outputType: "number",
+    params: [{ name: "value", desc: "-1..1", type: "number" }],
+  },
+  acos: {
+    cat: "Math",
+    desc: "Arccosine",
+    outputType: "number",
+    params: [{ name: "value", desc: "-1..1", type: "number" }],
+  },
+  atan: {
+    cat: "Math",
+    desc: "Arctangent",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
   atan2: {
     cat: "Math",
     desc: "Arctangent of y/x",
@@ -60,17 +135,47 @@ export const FUNCTION_META = {
       { name: "exp", desc: "Exponent", type: "number" },
     ],
   },
-  sign: { cat: "Math", desc: "Sign of number (-1, 0, 1)", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
-  trunc: { cat: "Math", desc: "Truncate decimal", outputType: "number", params: [{ name: "value", desc: "Number", type: "number" }] },
+  sign: {
+    cat: "Math",
+    desc: "Sign of number (-1, 0, 1)",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
+  trunc: {
+    cat: "Math",
+    desc: "Truncate decimal",
+    outputType: "number",
+    params: [{ name: "value", desc: "Number", type: "number" }],
+  },
   random: { cat: "Math", desc: "Random 0..1", outputType: "number", params: [] },
   PI: { cat: "Math", desc: "Pi constant", outputType: "number", params: [] },
   E: { cat: "Math", desc: "Euler constant", outputType: "number", params: [] },
 
   // === String ===
-  length: { cat: "String", desc: "String length", outputType: "number", params: [{ name: "str", desc: "String", type: "string" }] },
-  toUpperCase: { cat: "String", desc: "Convert to uppercase", outputType: "string", params: [{ name: "str", desc: "String", type: "string" }] },
-  toLowerCase: { cat: "String", desc: "Convert to lowercase", outputType: "string", params: [{ name: "str", desc: "String", type: "string" }] },
-  trim: { cat: "String", desc: "Remove whitespace", outputType: "string", params: [{ name: "str", desc: "String", type: "string" }] },
+  length: {
+    cat: "String",
+    desc: "String length",
+    outputType: "number",
+    params: [{ name: "str", desc: "String", type: "string" }],
+  },
+  toUpperCase: {
+    cat: "String",
+    desc: "Convert to uppercase",
+    outputType: "string",
+    params: [{ name: "str", desc: "String", type: "string" }],
+  },
+  toLowerCase: {
+    cat: "String",
+    desc: "Convert to lowercase",
+    outputType: "string",
+    params: [{ name: "str", desc: "String", type: "string" }],
+  },
+  trim: {
+    cat: "String",
+    desc: "Remove whitespace",
+    outputType: "string",
+    params: [{ name: "str", desc: "String", type: "string" }],
+  },
   split: {
     cat: "String",
     desc: "Split into array",
@@ -185,7 +290,12 @@ export const FUNCTION_META = {
       { name: "d", desc: "String", type: "string" },
     ],
   },
-  toString: { cat: "String", desc: "Convert to string", outputType: "string", params: [{ name: "value", desc: "Any value", type: "any" }] },
+  toString: {
+    cat: "String",
+    desc: "Convert to string",
+    outputType: "string",
+    params: [{ name: "value", desc: "Any value", type: "any" }],
+  },
   parseInt: {
     cat: "Convert",
     desc: "Parse integer",
@@ -195,11 +305,36 @@ export const FUNCTION_META = {
       { name: "radix", desc: "Base (10)", type: "number" },
     ],
   },
-  parseFloat: { cat: "Convert", desc: "Parse float", outputType: "number", params: [{ name: "str", desc: "String", type: "string" }] },
-  Number: { cat: "Convert", desc: "Convert to number", outputType: "number", params: [{ name: "value", desc: "Any value", type: "any" }] },
-  Boolean: { cat: "Convert", desc: "Convert to boolean", outputType: "boolean", params: [{ name: "value", desc: "Any value", type: "any" }] },
-  JSON_stringify: { cat: "JSON", desc: "Object to JSON string", outputType: "string", params: [{ name: "value", desc: "Object/Array", type: "any" }] },
-  JSON_parse: { cat: "JSON", desc: "JSON string to object", outputType: "any", params: [{ name: "str", desc: "JSON string", type: "string" }] },
+  parseFloat: {
+    cat: "Convert",
+    desc: "Parse float",
+    outputType: "number",
+    params: [{ name: "str", desc: "String", type: "string" }],
+  },
+  Number: {
+    cat: "Convert",
+    desc: "Convert to number",
+    outputType: "number",
+    params: [{ name: "value", desc: "Any value", type: "any" }],
+  },
+  Boolean: {
+    cat: "Convert",
+    desc: "Convert to boolean",
+    outputType: "boolean",
+    params: [{ name: "value", desc: "Any value", type: "any" }],
+  },
+  JSON_stringify: {
+    cat: "JSON",
+    desc: "Object to JSON string",
+    outputType: "string",
+    params: [{ name: "value", desc: "Object/Array", type: "any" }],
+  },
+  JSON_parse: {
+    cat: "JSON",
+    desc: "JSON string to object",
+    outputType: "any",
+    params: [{ name: "str", desc: "JSON string", type: "string" }],
+  },
 
   // === Array (with callbacks) ===
   map: {
@@ -284,8 +419,18 @@ export const FUNCTION_META = {
       { name: "value", desc: "Item to add", type: "any" },
     ],
   },
-  pop: { cat: "Array", desc: "Remove last element", outputType: "array", params: [{ name: "arr", desc: "Array", type: "array" }] },
-  shift: { cat: "Array", desc: "Remove first element", outputType: "array", params: [{ name: "arr", desc: "Array", type: "array" }] },
+  pop: {
+    cat: "Array",
+    desc: "Remove last element",
+    outputType: "array",
+    params: [{ name: "arr", desc: "Array", type: "array" }],
+  },
+  shift: {
+    cat: "Array",
+    desc: "Remove first element",
+    outputType: "array",
+    params: [{ name: "arr", desc: "Array", type: "array" }],
+  },
   unshift: {
     cat: "Array",
     desc: "Prepend to array",
@@ -314,14 +459,44 @@ export const FUNCTION_META = {
       { name: "depth", desc: "Depth (1)", type: "number" },
     ],
   },
-  reverse: { cat: "Array", desc: "Reverse array", outputType: "array", params: [{ name: "arr", desc: "Array", type: "array" }] },
-  Array_from: { cat: "Array", desc: "Create array from iterable", outputType: "array", params: [{ name: "value", desc: "Iterable", type: "any" }] },
-  Array_isArray: { cat: "Array", desc: "Check if array", outputType: "boolean", params: [{ name: "value", desc: "Any value", type: "any" }] },
+  reverse: {
+    cat: "Array",
+    desc: "Reverse array",
+    outputType: "array",
+    params: [{ name: "arr", desc: "Array", type: "array" }],
+  },
+  Array_from: {
+    cat: "Array",
+    desc: "Create array from iterable",
+    outputType: "array",
+    params: [{ name: "value", desc: "Iterable", type: "any" }],
+  },
+  Array_isArray: {
+    cat: "Array",
+    desc: "Check if array",
+    outputType: "boolean",
+    params: [{ name: "value", desc: "Any value", type: "any" }],
+  },
 
   // === Object ===
-  Object_keys: { cat: "Object", desc: "Get object keys", outputType: "array", params: [{ name: "obj", desc: "Object", type: "object" }] },
-  Object_values: { cat: "Object", desc: "Get object values", outputType: "array", params: [{ name: "obj", desc: "Object", type: "object" }] },
-  Object_entries: { cat: "Object", desc: "Get key-value pairs", outputType: "array", params: [{ name: "obj", desc: "Object", type: "object" }] },
+  Object_keys: {
+    cat: "Object",
+    desc: "Get object keys",
+    outputType: "array",
+    params: [{ name: "obj", desc: "Object", type: "object" }],
+  },
+  Object_values: {
+    cat: "Object",
+    desc: "Get object values",
+    outputType: "array",
+    params: [{ name: "obj", desc: "Object", type: "object" }],
+  },
+  Object_entries: {
+    cat: "Object",
+    desc: "Get key-value pairs",
+    outputType: "array",
+    params: [{ name: "obj", desc: "Object", type: "object" }],
+  },
   Object_assign: {
     cat: "Object",
     desc: "Merge objects",

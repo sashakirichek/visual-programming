@@ -179,10 +179,7 @@ function validateAllEdges(nodes, edges) {
   return errors;
 }
 
-const initialValidationErrors = validateAllEdges(
-  persistedGraphState.nodes,
-  persistedGraphState.edges,
-);
+const initialValidationErrors = validateAllEdges(persistedGraphState.nodes, persistedGraphState.edges);
 
 export const useFlowStore = create((set, get) => ({
   nodes: persistedGraphState.nodes,
@@ -220,10 +217,10 @@ export const useFlowStore = create((set, get) => ({
       );
 
       const edgeId = `${connection.source}-${connection.target}-${connection.sourceHandle || ""}-${connection.targetHandle || ""}`;
-      const edgeData = { 
-        ...connection, 
+      const edgeData = {
+        ...connection,
         animated: true,
-        ...(validation.valid ? {} : { data: { isInvalid: true, errorMessage: validation.error } })
+        ...(validation.valid ? {} : { data: { isInvalid: true, errorMessage: validation.error } }),
       };
       const newEdges = addEdge(edgeData, state.edges);
       const newErrors = { ...state.edgeValidationErrors };

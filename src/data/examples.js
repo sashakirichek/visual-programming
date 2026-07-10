@@ -801,13 +801,13 @@ export const EXAMPLES = [
           id: "fn1",
           type: "functionNode",
           position: { x: 300, y: 150 },
-          data: { 
-            label: "functionNode", 
-            functionName: "map", 
-            arg0: "", 
+          data: {
+            label: "functionNode",
+            functionName: "map",
+            arg0: "",
             arg1: "(x) => x * 2",
-            arg2: "", 
-            arg3: "" 
+            arg2: "",
+            arg3: "",
           },
         },
         { id: "out1", type: "outputNode", position: { x: 550, y: 150 }, data: { label: "outputNode" } },

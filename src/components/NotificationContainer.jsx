@@ -9,11 +9,7 @@ export default function NotificationContainer() {
       {notifications.map((notification) => (
         <div key={notification.id} className={`notification notification-${notification.type}`}>
           <span>{notification.message}</span>
-          <button
-            className="notification-close"
-            onClick={() => removeNotification(notification.id)}
-            aria-label="Close"
-          >
+          <button className="notification-close" onClick={() => removeNotification(notification.id)} aria-label="Close">
             ×
           </button>
         </div>

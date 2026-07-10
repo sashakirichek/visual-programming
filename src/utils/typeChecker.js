@@ -7,14 +7,14 @@ import { FUNCTION_META } from "../data/functionMeta";
 
 // Type color mapping for visual representation
 export const TYPE_COLORS = {
-  number: "#FFB84D",    // Orange
-  string: "#7CB342",    // Green
-  array: "#42A5F5",     // Blue
-  object: "#AB47BC",    // Purple
-  boolean: "#EF5350",   // Red
-  map: "#29B6F6",       // Light Blue
-  set: "#66BB6A",       // Light Green
-  any: "#9E9E9E",       // Gray
+  number: "#FFB84D", // Orange
+  string: "#7CB342", // Green
+  array: "#42A5F5", // Blue
+  object: "#AB47BC", // Purple
+  boolean: "#EF5350", // Red
+  map: "#29B6F6", // Light Blue
+  set: "#66BB6A", // Light Green
+  any: "#9E9E9E", // Gray
 };
 
 // Compatibility matrix: which types can connect to which
@@ -74,14 +74,14 @@ function getInputNodeType(node) {
   const valueType = node.data?.valueType;
   if (valueType === "map") return "map";
   if (valueType === "set") return "set";
-  
+
   // Try to infer from value
   const value = node.data?.value;
   if (typeof value === "string" && value.startsWith("[")) return "array";
   if (typeof value === "string" && value.startsWith("{")) return "object";
   if (typeof value === "number" || !isNaN(value)) return "number";
   if (value === "true" || value === "false") return "boolean";
-  
+
   return "string";
 }
 
@@ -91,7 +91,7 @@ function getInputNodeType(node) {
 function getFunctionOutputType(node) {
   const fnName = node.data?.functionName;
   if (!fnName) return "any";
-  
+
   const meta = FUNCTION_META[fnName];
   return meta?.outputType || "any";
 }
@@ -113,10 +113,10 @@ export function getExpectedParameterType(nodeId, paramIndex, nodes, edges) {
     case "functionNode": {
       const fnName = node.data?.functionName;
       if (!fnName) return "any";
-      
+
       const meta = FUNCTION_META[fnName];
       if (!meta || !meta.params) return "any";
-      
+
       return meta.params[paramIndex]?.type || "any";
     }
     case "conditionNode": {
@@ -138,7 +138,7 @@ export function getExpectedParameterType(nodeId, paramIndex, nodes, edges) {
 export function areTypesCompatible(sourceType, targetType) {
   if (sourceType === "any" || targetType === "any") return true;
   if (sourceType === targetType) return true;
-  
+
   const compatible = TYPE_COMPATIBILITY[targetType];
   return compatible?.includes(sourceType) ?? false;
 }

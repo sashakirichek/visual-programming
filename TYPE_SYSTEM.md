@@ -41,9 +41,10 @@ When you create a connection between incompatible types:
 - **Connection still works** at runtime (graceful degradation)
 
 Example error messages:
+
 ```
 ⚠ Cannot connect string to array
-⚠ Cannot connect number to boolean  
+⚠ Cannot connect number to boolean
 ⚠ Cannot connect map to string
 ```
 
@@ -295,12 +296,14 @@ When connecting incompatible types, you'll see notifications like:
 ### Valid vs Invalid Connections
 
 **Valid Connection (🟢 green dashed line):**
+
 ```
 InputNode("hello") 🟢 → split() 🟢 ✓
   String output    →  String param ✓
 ```
 
 **Invalid Connection (🔴 red dashed line):**
+
 ```
 InputNode("hello") 🟢 → map() 🔵 ⚠️
   String output    →  Array param ✗

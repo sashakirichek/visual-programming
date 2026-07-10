@@ -9,7 +9,7 @@ export default function InputNode({ id, data, selected, width }) {
   const executionResults = useFlowStore((s) => s.executionResults);
   const result = executionResults[id];
   const valueType = data.valueType || "literal";
-  
+
   // Map valueType to type for handle color
   const getOutputType = () => {
     if (valueType === "map") return "map";
@@ -25,7 +25,7 @@ export default function InputNode({ id, data, selected, width }) {
     }
     return "any";
   };
-  
+
   const outputType = getOutputType();
 
   return (
