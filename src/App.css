@@ -63,6 +63,9 @@
   --radius-sm: 3px;
   --radius-md: 5px;
   --radius-lg: 7px;
+
+  scrollbar-color: var(--bg-tertiary) var(--sys-transparent);
+  scrollbar-width: thin;
 }
 
 [data-theme="light"] {
@@ -331,12 +334,12 @@ body {
 
 /* ===== Side Panels ===== */
 .side-panel {
-  width: 260px;
   background: var(--panel-bg);
   overflow-y: auto;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  width: 20%;
 }
 .left-panel {
   border-right: 1px solid var(--separator);
