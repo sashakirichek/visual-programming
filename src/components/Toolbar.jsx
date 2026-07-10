@@ -186,14 +186,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           <span></span>
           <span></span>
         </button>
-        <button className="toolbar-btn" onClick={handleRun} title="Run (R)">
-          Run
-        </button>
-        {isRunning && (
-          <button className="toolbar-btn" onClick={handleStop} title="Stop">
-            Stop
-          </button>
-        )}
+
         {/* Desktop toolbar actions */}
         <div className="toolbar-actions">
           <button
@@ -252,7 +245,11 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           >
             Run
           </button>
-
+          {isRunning && (
+            <button className="toolbar-btn" onClick={handleStop} title="Stop">
+              Stop
+            </button>
+          )}
           {debugMode ? (
             <button className="toolbar-btn" onClick={handleStopDebug} title="Stop debugging (D)">
               Stop

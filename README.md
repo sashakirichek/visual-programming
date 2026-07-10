@@ -1,6 +1,6 @@
 # Visual Programming
 
-A node-based visual programming environment built with React, [@xyflow/react](https://reactflow.dev), and TanStack.
+A node-based [visual programming](https://en.wikipedia.org/wiki/Visual_programming_language) environment built with React, [reactflow](https://reactflow.dev), and TanStack.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/image2.png">
@@ -50,23 +50,6 @@ pnpm build
 - [@tanstack/react-query](https://tanstack.com/query) – async state management
 - [@tanstack/react-table](https://tanstack.com/table) – data tables (available for future use)
 - [Zustand](https://zustand-demo.pmnd.rs/) – UI state management
-
-## GitHub Actions: Coding Agent
-
-To instruct the AI coding agent to fix an issue:
-
-1. Create a GitHub issue describing the bug or feature request
-2. Add the `approved-for-fix` label (only repository owners/maintainers can do this)
-3. The coding agent workflow will automatically trigger and open a pull request with the fix
-
-## Create static web app (one-time)
-
-az staticwebapps create --name my-app --resource-group my-rg --location eastus \
- --build-property-app-location "." --build-property-output-location "dist"
-
-## Deploy
-
-az staticwebapp deploy --name my-app --build-folder dist
 
 ## More visual programming inspiration
 
