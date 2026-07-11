@@ -1004,7 +1004,7 @@ body {
 
 /* ===== Module Panel ===== */
 .panel {
-  padding: 8px;
+  padding: 20px;
   overflow-y: auto;
 }
 .module-save-form {

@@ -65,7 +65,8 @@ function ParamRow({ id, index, param, data, updateNodeData }) {
 }
 
 function BindingRow({ id, index, data, updateNodeData, onRemove }) {
-  const connections = useNodeConnections({ type: "target", id: `bind${index}` });
+  const allConnections = useNodeConnections();
+  const connections = useNodeConnections({ handleType: "target", handleId: `bind${index}` });
   const connected = connections.length > 0;
 
   return (

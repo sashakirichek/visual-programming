@@ -19,7 +19,7 @@ export default function ForLoopNode({ id, data, selected, width }) {
   const closureCount = getClosureCount(data);
 
   function BindingRow({ index }) {
-    const connections = useNodeConnections({ type: "target", id: `bind${index}` });
+    const connections = useNodeConnections({ handleType: "target", handleId: `bind${index}` });
     const connected = connections.length > 0;
 
     const [name, setName] = useState(data[`bindName${index}`] || "");
