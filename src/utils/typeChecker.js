@@ -49,6 +49,7 @@ export function getNodeOutputType(node, nodes, edges, results) {
     case "conditionNode":
       return "any";
     case "loopNode":
+    case "flowForLoopNode":
       return "array";
     case "forLoopNode":
       return "any";
@@ -155,8 +156,13 @@ export function validateConnection(sourceNodeId, sourceHandle, targetNodeId, tar
   // Extract parameter index from handle (e.g., "arg0" -> 0)
   const paramIndex = parseInt(targetHandle?.replace(/\D/g, ""), 10);
 
-  const sourceType = getNodeOutputType(sourceNode, nodes, edges, results);
-  const expectedType = getExpectedParameterType(targetNodeId, paramIndex, nodes, edges);
+  let sourceType = getNodeOutputType(sourceNode, nodes, edges, results);
+  if (sourceNode.type === "flowForLoopNode" && sourceHandle === "index") sourceType = "number";
+
+  let expectedType = getExpectedParameterType(targetNodeId, paramIndex, nodes, edges);
+  if (targetNode.type === "flowForLoopNode" && ["start", "limit", "step"].includes(targetHandle)) {
+    expectedType = "number";
+  }
 
   if (!areTypesCompatible(sourceType, expectedType)) {
     return {

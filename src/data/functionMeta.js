@@ -337,6 +337,15 @@ export const FUNCTION_META = {
   },
 
   // === Array (with callbacks) ===
+  item: {
+    cat: "Array",
+    desc: "Get element by index",
+    outputType: "object",
+    params: [
+      { name: "arr", desc: "Array", type: "array" },
+      { name: "index", desc: "number", type: "number" },
+    ],
+  },
   map: {
     cat: "Array",
     desc: "Transform each element",

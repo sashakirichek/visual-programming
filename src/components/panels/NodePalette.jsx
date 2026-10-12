@@ -10,6 +10,7 @@ const NODE_TYPES = [
   { type: "apiNode", label: "API  API Query", color: "var(--sys-red)", description: "Fetch from external API" },
   { type: "loopNode", label: "LP  Loop", color: "var(--sys-indigo)", description: "Array iteration" },
   { type: "forLoopNode", label: "FL  For", color: "var(--sys-indigo)", description: "For-loop control" },
+  { type: "flowForLoopNode", label: "FF  Flow For", color: "var(--sys-cyan)", description: "Graph-connected for loop" },
   { type: "timerNode", label: "TM  Timer", color: "var(--sys-cyan)", description: "Interval trigger" },
   { type: "jsonNode", label: "JS  JSON", color: "var(--sys-pink)", description: "JSON operations" },
   {
@@ -47,6 +48,10 @@ export default function NodePalette({ modules }) {
     }
     if (type === "forLoopNode") {
       nodeData.data = { label: type, start: "0", condition: "i < 10", iteration: "i++", body: "i", closureCount: 0 };
+    }
+    if (type === "flowForLoopNode") {
+      nodeData.data = { label: type, start: "0", limit: "10", step: "1", closureCount: 0 };
+      nodeData.style = { width: 760, height: 480 };
     }
     if (type === "timerNode") {
       nodeData.data = { label: type, interval: 1000, autoStart: false };

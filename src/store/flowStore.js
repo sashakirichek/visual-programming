@@ -15,6 +15,7 @@ const VALID_NODE_TYPES = new Set([
   "conditionNode",
   "loopNode",
   "forLoopNode",
+  "flowForLoopNode",
   "timerNode",
   "jsonNode",
   "moduleNode",

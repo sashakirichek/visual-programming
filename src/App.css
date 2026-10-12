@@ -471,6 +471,60 @@ body {
 .loop-node .node-header {
   color: var(--sys-indigo);
 }
+.flow-for-loop-node {
+  box-sizing: border-box;
+  height: 480px;
+  border: 1px dashed var(--sys-indigo);
+  background: transparent;
+  position: relative;
+}
+.flow-for-loop-node > .node-header {
+  border-bottom: 1px solid var(--node-border);
+  background: var(--node-bg);
+}
+.flow-loop-content {
+  position: absolute;
+  inset: 36px 10px 10px;
+}
+.flow-loop-controls {
+  position: relative;
+  z-index: 1;
+  max-width: 220px;
+}
+
+.flow-loop-inputs {
+  
+  top: 104px;
+  left: 4px;
+  max-width: 220px;
+}
+.flow-loop-index-row {
+  position: relative;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--node-border);
+}
+.flow-loop-closures {
+  margin-top: 8px;
+}
+.flow-loop-body-output {
+  position: absolute;
+  top: 58%;
+  right: 0;
+  width: auto;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px;
+}
+.flow-loop-content > .node-result {
+  position: absolute;
+  left: 240px;
+  bottom: 0;
+  max-width: calc(100% - 370px);
+}
 .json-node .node-header {
   color: var(--sys-pink);
 }

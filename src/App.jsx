@@ -12,6 +12,7 @@ import FunctionNode from "./components/nodes/FunctionNode";
 import VariableNode from "./components/nodes/VariableNode";
 import ConditionNode from "./components/nodes/ConditionNode";
 import ForLoopNode from "./components/nodes/ForLoopNode";
+import FlowForLoopNode from "./components/nodes/FlowForLoopNode";
 import TimerNode from "./components/nodes/TimerNode";
 import JsonNode from "./components/nodes/JsonNode";
 import ModuleNode from "./components/nodes/ModuleNode";
@@ -36,6 +37,7 @@ const nodeTypes = {
   variableNode: VariableNode,
   conditionNode: ConditionNode,
   forLoopNode: ForLoopNode,
+  flowForLoopNode: FlowForLoopNode,
   timerNode: TimerNode,
   jsonNode: JsonNode,
   moduleNode: ModuleNode,
