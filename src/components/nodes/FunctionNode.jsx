@@ -28,15 +28,15 @@ function ParamRow({ id, index, param, data, updateNodeData }) {
         (isMultiline ? (
           param.isCallback ? (
             <Editor
-              height="120px"
+              height="100px"
               theme={isLightTheme ? "vs-light" : "vs-dark"}
               defaultLanguage="javascript"
               defaultValue={inputValue}
-              onChange={(e) => updateNodeData(id, { [`arg${index}`]: e.target.value })}
+              onChange={(e) => updateNodeData(id, { [`arg${index}`]: e })}
               options={{
                 lineNumbers: "off",
                 glyphMargin: false,
-                folding: false,
+                folding: true,
                 // Undocumented see https://github.com/Microsoft/vscode/issues/30795#issuecomment-410998882
                 lineDecorationsWidth: 0,
                 lineNumbersMinChars: 0,

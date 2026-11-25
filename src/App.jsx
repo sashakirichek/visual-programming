@@ -245,6 +245,8 @@ function AppContent() {
             snapToGrid
             snapGrid={[8, 8]}
             deleteKeyCode="Delete"
+            // needed to enable Monaco Editor space input https://github.com/microsoft/monaco-editor/discussions/5204#discussioncomment-16456800
+            panActivationKeyCode={null}
           >
             <Background variant="dots" gap={8} size={1} color={iOS ? "var(--bg-primary)" : "var(--fill-primary)"} />
             <Controls />
