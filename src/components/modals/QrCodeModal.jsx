@@ -1,3 +1,5 @@
+import { useTransition } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { QRCodeSVG } from "qrcode.react";
 
 export default function QrCodeModal({ url, onClose }) {
@@ -11,9 +13,11 @@ export default function QrCodeModal({ url, onClose }) {
           </button>
         </div>
         <div className="modal-body qr-modal-body">
-          <div className="qr-code-wrapper">
-            <QRCodeSVG value={url} size={512} />
-          </div>
+          <ErrorBoundary fallback={<p>Unable to generate QR code for that big of a structure</p>}>
+            <div className="qr-code-wrapper">
+              <QRCodeSVG value={url} size={512} />
+            </div>
+          </ErrorBoundary>
         </div>
       </div>
     </div>
