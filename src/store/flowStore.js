@@ -4,6 +4,7 @@ import { validateConnection } from "../utils/typeChecker";
 
 const initialNodes = [];
 const initialEdges = [];
+const initialDrawings = [];
 const FLOW_STORAGE_KEY = "vp-flow-state";
 
 const VALID_NODE_TYPES = new Set([
@@ -98,6 +99,65 @@ function sanitizeEdges(edges) {
     }));
 }
 
+const VALID_DRAWING_TYPES = new Set(["rectangle", "ellipse", "text", "freehand", "line", "arrow"]);
+const VALID_DRAWING_TARGETS = new Set(["drawing", "node"]);
+
+function sanitizeDrawingEndpoint(endpoint) {
+  if (!endpoint || typeof endpoint.x !== "number" || typeof endpoint.y !== "number") return null;
+
+  const targetType = VALID_DRAWING_TARGETS.has(endpoint.targetType) ? endpoint.targetType : null;
+  return {
+    x: endpoint.x,
+    y: endpoint.y,
+    ...(targetType && typeof endpoint.targetId === "string"
+      ? {
+          targetType,
+          targetId: sanitizeString(endpoint.targetId),
+          ...(typeof endpoint.anchor === "string" ? { anchor: sanitizeString(endpoint.anchor) } : {}),
+        }
+      : {}),
+  };
+}
+
+function sanitizeDrawings(drawings) {
+  if (!Array.isArray(drawings)) return [];
+  return drawings
+    .filter((drawing) => drawing && typeof drawing.id === "string" && VALID_DRAWING_TYPES.has(drawing.type))
+    .map((drawing) => {
+      const safe = {
+        id: sanitizeString(drawing.id),
+        type: drawing.type,
+        stroke: typeof drawing.stroke === "string" && /^#[\da-f]{3,8}$/i.test(drawing.stroke) ? drawing.stroke : "#1f2937",
+        fill: drawing.fill === "none" ? "none" : typeof drawing.fill === "string" && /^#[\da-f]{3,8}$/i.test(drawing.fill) ? drawing.fill : "none",
+        strokeWidth: typeof drawing.strokeWidth === "number" ? Math.max(1, Math.min(24, drawing.strokeWidth)) : 2,
+      };
+
+      if (["rectangle", "ellipse", "text"].includes(drawing.type)) {
+        safe.x = typeof drawing.x === "number" ? drawing.x : 0;
+        safe.y = typeof drawing.y === "number" ? drawing.y : 0;
+        safe.width = typeof drawing.width === "number" ? Math.max(0, drawing.width) : 0;
+        safe.height = typeof drawing.height === "number" ? Math.max(0, drawing.height) : 0;
+      }
+      if (drawing.type === "text") safe.text = sanitizeString(typeof drawing.text === "string" ? drawing.text : "Text");
+      if (drawing.type === "freehand") {
+        safe.points = Array.isArray(drawing.points)
+          ? drawing.points
+              .slice(0, 10000)
+              .filter((point) => point && typeof point.x === "number" && typeof point.y === "number")
+              .map((point) => ({ x: point.x, y: point.y }))
+          : [];
+      }
+      if (["line", "arrow"].includes(drawing.type)) {
+        const start = sanitizeDrawingEndpoint(drawing.start);
+        const end = sanitizeDrawingEndpoint(drawing.end);
+        safe.start = start || { x: 0, y: 0 };
+        safe.end = end || { x: 0, y: 0 };
+      }
+
+      return safe;
+    });
+}
+
 function sanitizeModules(modules) {
   if (!modules || typeof modules !== "object" || Array.isArray(modules)) return {};
 
@@ -126,24 +186,25 @@ function serializeGraphState(state) {
   return {
     nodes: sanitizeNodes(state?.nodes),
     edges: sanitizeEdges(state?.edges),
+    drawings: sanitizeDrawings(state?.drawings),
     modules: sanitizeModules(state?.modules),
   };
 }
 
 function loadPersistedGraphState() {
   if (typeof window === "undefined") {
-    return { nodes: initialNodes, edges: initialEdges, modules: {} };
+    return { nodes: initialNodes, edges: initialEdges, drawings: initialDrawings, modules: {} };
   }
 
   try {
     const raw = window.localStorage.getItem(FLOW_STORAGE_KEY);
     if (!raw) {
-      return { nodes: initialNodes, edges: initialEdges, modules: {} };
+      return { nodes: initialNodes, edges: initialEdges, drawings: initialDrawings, modules: {} };
     }
 
     return serializeGraphState(JSON.parse(raw));
   } catch {
-    return { nodes: initialNodes, edges: initialEdges, modules: {} };
+    return { nodes: initialNodes, edges: initialEdges, drawings: initialDrawings, modules: {} };
   }
 }
 
@@ -185,6 +246,7 @@ const initialValidationErrors = validateAllEdges(persistedGraphState.nodes, pers
 export const useFlowStore = create((set, get) => ({
   nodes: persistedGraphState.nodes,
   edges: persistedGraphState.edges,
+  drawings: persistedGraphState.drawings,
   selectedNode: null,
   modules: persistedGraphState.modules,
   executionResults: {},
@@ -240,6 +302,15 @@ export const useFlowStore = create((set, get) => ({
 
   addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
 
+  addDrawing: (drawing) => set((state) => ({ drawings: sanitizeDrawings([...state.drawings, drawing]) })),
+
+  updateDrawing: (id, updates) =>
+    set((state) => ({
+      drawings: sanitizeDrawings(state.drawings.map((drawing) => (drawing.id === id ? { ...drawing, ...updates } : drawing))),
+    })),
+
+  removeDrawing: (id) => set((state) => ({ drawings: state.drawings.filter((drawing) => drawing.id !== id) })),
+
   updateNodeData: (nodeId, data) =>
     set((state) => ({
       nodes: state.nodes.map((n) => (n.id === nodeId ? { ...n, data: { ...n.data, ...data } } : n)),
@@ -279,6 +350,7 @@ export const useFlowStore = create((set, get) => ({
     set({
       nodes: [],
       edges: [],
+      drawings: [],
       selectedNode: null,
       executionResults: {},
       consoleLogs: [],
@@ -397,10 +469,11 @@ export const useFlowStore = create((set, get) => ({
   importFromJson: (jsonString) => {
     try {
       const raw = JSON.parse(jsonString);
-      const { nodes, edges, modules } = serializeGraphState(raw);
+      const { nodes, edges, drawings, modules } = serializeGraphState(raw);
       set({
         nodes,
         edges,
+        drawings,
         modules,
         selectedNode: null,
         executionResults: {},

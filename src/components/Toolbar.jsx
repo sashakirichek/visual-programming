@@ -7,6 +7,7 @@ import QrCodeModal from "./modals/QrCodeModal";
 export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightPanel }) {
   const nodes = useFlowStore((s) => s.nodes);
   const edges = useFlowStore((s) => s.edges);
+  const drawings = useFlowStore((s) => s.drawings);
   const isRunning = useFlowStore((s) => s.isRunning);
   const debugMode = useFlowStore((s) => s.debugMode);
   const setExecutionResults = useFlowStore((s) => s.setExecutionResults);
@@ -105,14 +106,14 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
   }, [clearResults, setDebugMode]);
 
   const handleClearAll = useCallback(() => {
-    if (nodes.length === 0 && edges.length === 0) return;
+    if (nodes.length === 0 && edges.length === 0 && drawings.length === 0) return;
 
-    const confirmed = window.confirm("Remove all nodes and edges? Saved modules will be kept.");
+    const confirmed = window.confirm("Remove all nodes, edges, and drawings? Saved modules will be kept.");
     if (!confirmed) return;
 
     clearFlow();
     setRightPanel(null);
-  }, [nodes.length, edges.length, clearFlow, setRightPanel]);
+  }, [nodes.length, edges.length, drawings.length, clearFlow, setRightPanel]);
 
   const buildShareUrl = useCallback(() => {
     const json = exportToJson();
@@ -271,8 +272,8 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
           <button
             className="toolbar-btn"
             onClick={handleClearAll}
-            disabled={nodes.length === 0 && edges.length === 0}
-            title="Remove all nodes and edges"
+            disabled={nodes.length === 0 && edges.length === 0 && drawings.length === 0}
+            title="Remove all nodes, edges, and drawings"
           >
             Clear All
           </button>
@@ -365,7 +366,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
             <button onClick={() => closeMenuOnClick(handleClear)}>CLR</button>
             <button
               onClick={() => closeMenuOnClick(handleClearAll)}
-              disabled={nodes.length === 0 && edges.length === 0}
+              disabled={nodes.length === 0 && edges.length === 0 && drawings.length === 0}
             >
               Clear All
             </button>

@@ -2320,6 +2320,195 @@ body {
   stroke: var(--sys-gray);
 }
 
+.drawing-layer-panel {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  z-index: 4;
+  pointer-events: none;
+}
+.drawing-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.drawing-layer-svg {
+  display: block;
+  overflow: visible;
+}
+.drawing-capture-surface {
+  fill: transparent;
+  pointer-events: all;
+  cursor: crosshair;
+}
+.drawing-shape-visible {
+  vector-effect: non-scaling-stroke;
+}
+.drawing-shape-text-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: var(--label-primary);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.drawing-shape-text {
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  font: 15px/1.35 var(--font-ui);
+  white-space: pre-wrap;
+}
+.drawing-shape-text-editor {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 2px;
+  border: 0;
+  outline: 0;
+  color: var(--label-primary);
+  background: transparent;
+  font: 15px/1.35 var(--font-ui);
+  text-align: center;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  resize: none;
+  align-content: center;
+}
+.drawing-shape-text-editor:focus {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.drawing-hit-area {
+  cursor: move;
+}
+.drawing-selection-box {
+  fill: transparent;
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  pointer-events: none;
+}
+.drawing-resize-handle {
+  fill: var(--bg-primary);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  cursor: nwse-resize;
+}
+.drawing-snap-anchor {
+  fill: var(--bg-primary);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.drawing-text-content {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: var(--label-primary);
+  font: 15px/1.35 var(--font-ui);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: none;
+}
+.drawing-text-editor {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 2px;
+  border: 0;
+  outline: 0;
+  color: var(--label-primary);
+  background: transparent;
+  font: 15px/1.35 var(--font-ui);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  resize: none;
+}
+.drawing-text-editor:focus {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.drawing-move-handle {
+  fill: var(--accent);
+  stroke: var(--bg-primary);
+  stroke-width: 1;
+  cursor: move;
+}
+.drawing-tool-rail-panel {
+  z-index: 20;
+  margin: 12px !important;
+  pointer-events: none;
+}
+.drawing-tool-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: calc(100vh - 92px);
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid var(--separator-opaque);
+  border-radius: 7px;
+  background: var(--panel-bg);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+  pointer-events: auto;
+}
+.drawing-tool-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--label-secondary);
+  background: transparent;
+  cursor: pointer;
+}
+.drawing-tool-button svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+.drawing-tool-button:hover {
+  color: var(--label-primary);
+  background: var(--fill-tertiary);
+}
+.drawing-tool-button.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--fill-tertiary);
+}
+.drawing-tool-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+@media (max-width: 640px) {
+  .drawing-tool-rail-panel {
+    margin: 8px !important;
+  }
+  .drawing-tool-rail {
+    gap: 2px;
+    padding: 4px;
+    max-height: calc(100vh - 72px);
+  }
+  .drawing-tool-button {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+}
+
 /* Invalid connection styling */
 .react-flow__edge.invalid .react-flow__edge-path {
   stroke: #ff6b6b;

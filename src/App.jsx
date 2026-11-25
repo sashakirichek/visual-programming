@@ -19,6 +19,8 @@ import ModuleNode from "./components/nodes/ModuleNode";
 import ScopeNode from "./components/nodes/ScopeNode";
 import ApiNode from "./components/nodes/ApiNode";
 import TextNode from "./components/nodes/TextNode";
+import DrawingLayer from "./components/DrawingLayer";
+import DrawingToolRail from "./components/DrawingToolRail";
 import NodePalette from "./components/panels/NodePalette";
 import DebugPanel from "./components/panels/DebugPanel";
 import ModulePanel from "./components/panels/ModulePanel";
@@ -51,6 +53,7 @@ var iOS = /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 function AppContent() {
   const [leftPanel, setLeftPanel] = useState(null);
   const [rightPanel, setRightPanel] = useState(null);
+  const [drawingMode, setDrawingMode] = useState("select");
   const [urlImportMsg, setUrlImportMsg] = useState(null);
   const { addNotification } = useNotification();
 
@@ -241,13 +244,20 @@ function AppContent() {
             onNodeClick={handleNodeClick}
             onPaneClick={handlePaneClick}
             nodeTypes={nodeTypes}
+            panOnDrag={drawingMode === "pan"}
+            selectionOnDrag={drawingMode === "select"}
+            nodesDraggable={drawingMode === "select"}
+            nodesConnectable={drawingMode === "select"}
+            elementsSelectable={drawingMode === "select"}
             fitView
             snapToGrid
             snapGrid={[8, 8]}
-            deleteKeyCode="Delete"
+            deleteKeyCode={drawingMode === "select" ? ["Delete", "Backspace"] : null}
           >
             <Background variant="dots" gap={8} size={1} color={iOS ? "var(--bg-primary)" : "var(--fill-primary)"} />
             <Controls />
+            <DrawingLayer mode={drawingMode} onModeChange={setDrawingMode} />
+            <DrawingToolRail mode={drawingMode} onChange={setDrawingMode} />
             {/* <MiniMap nodeStrokeWidth={1} /> */}
           </ReactFlow>
           {debugMode && (
