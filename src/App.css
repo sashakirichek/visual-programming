@@ -182,7 +182,7 @@ body {
   font-weight: 900;
 }
 .brand-name {
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   font-weight: 700;
   color: var(--label-primary);
   white-space: nowrap;
@@ -203,7 +203,7 @@ body {
   border: 0; /*  1px solid var(--separator-opaque); */
   border-radius: var(--radius-sm);
   /* color: var(--label-secondary); */
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   font-family: var(--font-mono);
   cursor: pointer;
   background: var(--bg-primary);
@@ -351,7 +351,7 @@ body {
 }
 .panel-title,
 .panel-header {
-  padding: 3px 0 12px 0;
+  padding: 20px;
   font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--label-secondary);
@@ -395,12 +395,12 @@ body {
   background: var(--fill-quaternary);
 }
 .palette-label {
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   color: var(--label-primary);
   /* font-family: var(--font-mono); */
 }
 .palette-desc {
-  font-size: 12px;
+  font-size: var(--font-size-small);
   color: var(--label-secondary);
   margin-top: 4px;
 }
@@ -796,7 +796,7 @@ body {
   max-width: 140px;
 }
 .output-gauge-val {
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   color: var(--label-primary);
   font-weight: 700;
   margin-top: -4px;
@@ -1059,15 +1059,14 @@ body {
 }
 
 /* ===== Module Panel ===== */
-.panel {
-  padding: 20px;
+.panel {  
   overflow-y: auto;
 }
 .module-save-form {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px;
+  padding: 20px;
   background: var(--bg-primary);
   border-radius: var(--radius-sm);
   border: 1px solid var(--separator-opaque);
@@ -1079,7 +1078,7 @@ body {
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   color: var(--label-primary);
-  font-size: 12px;
+  font-size: var(--font-size-small);
   font-family: var(--font-mono);
   outline: none;
 }
@@ -1103,7 +1102,7 @@ body {
   padding: 9px 12px;
   cursor: pointer;
   background: var(--bg-primary);
-  font-size: 12px;
+  font-size: var(--font-size-small);
   font-weight: 600;
   font-family: var(--font-mono);
   transition: background 0.1s;
@@ -1142,12 +1141,13 @@ body {
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
-  /* padding: 2px 14px; */
+  padding: 0px 20px;
+  min-height: 24px;
 }
 .prop-row label {
   font-size: var(--font-size-small);
   color: var(--label-secondary);
-  min-width: 60px;
+  min-width: 100px;
   text-transform: uppercase;
   font-family: var(--font-mono);
 }
@@ -1183,7 +1183,7 @@ body {
   color: var(--label-secondary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  padding: 8px 0 4px;
+  padding: 20px;
   border-top: 1px solid var(--separator);
   margin-top: 4px;
   font-family: var(--font-mono);
@@ -1200,7 +1200,7 @@ body {
 }
 .prop-actions {
   margin-top: 12px;
-  padding-top: 12px;
+  padding: 20px;
   border-top: 1px solid var(--separator);
 }
 
@@ -1292,7 +1292,7 @@ body {
   border-bottom: 1px solid var(--separator);
 }
 .modal-header h2 {
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   font-weight: 700;
   letter-spacing: 0.04em;
   font-family: var(--font-mono);
@@ -1301,7 +1301,7 @@ body {
   background: var(--fill-quaternary);
   border: 1px solid var(--separator-opaque);
   color: var(--label-tertiary);
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   cursor: pointer;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
@@ -1321,7 +1321,7 @@ body {
   background: none;
   border: none;
   color: var(--label-tertiary);
-  font-size: 12px;
+  font-size: var(--font-size-small);
   font-family: var(--font-mono);
   text-transform: uppercase;
   cursor: pointer;
@@ -1352,7 +1352,7 @@ body {
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   color: var(--label-primary);
-  font-size: 12px;
+  font-size: var(--font-size-small);
   font-family: var(--font-mono);
   outline: none;
   resize: vertical;
@@ -1478,7 +1478,7 @@ body {
   overflow-y: auto;
 }
 .example-item {
-  padding: 10px 12px;
+  padding: 20px;
   border: 1px solid var(--separator-opaque);
   margin-bottom: 6px;
   cursor: pointer;
@@ -1489,11 +1489,10 @@ body {
   background: var(--fill-quaternary);
 }
 .example-title {
-  font-size: 12px;
-  font-weight: 700;
   color: var(--label-primary);
   font-family: var(--font-mono);
   margin-bottom: 4px;
+  text-transform: uppercase;
 }
 .example-meta {
   display: flex;
@@ -1502,7 +1501,7 @@ body {
   margin-bottom: 4px;
 }
 .difficulty-badge {
-  font-size: 9px;
+  font-size: var(--font-size-small);
   padding: 1px 6px;
   border: 1px solid var(--label-tertiary);
   color: var(--label-secondary);
@@ -1529,17 +1528,18 @@ body {
   flex-wrap: wrap;
 }
 .example-tag {
-  font-size: 9px;
+  font-size: var(--font-size-small);
   padding: 1px 4px;
   border: 1px solid var(--separator-opaque);
-  color: var(--label-tertiary);
+  color: var(--label-secondary);
   font-family: var(--font-mono);
   border-radius: var(--radius-sm);
 }
 .example-desc {
   font-size: var(--font-size-small);
-  color: var(--label-tertiary);
+  color: var(--label-secondary);
   margin-bottom: 6px;
+  padding: 10px 0;
 }
 .example-actions {
   display: flex;
@@ -1548,7 +1548,6 @@ body {
 
 /* ===== Challenge Panel ===== */
 .challenge-panel {
-  padding: 8px;
   overflow-y: auto;
 }
 .challenge-active {
@@ -1601,7 +1600,7 @@ body {
   padding-left: 6px;
 }
 .challenge-item {
-  padding: 10px 12px;
+  padding: 20px;
   border: 1px solid var(--separator-opaque);
   margin-bottom: 6px;
   cursor: pointer;
@@ -1612,23 +1611,21 @@ body {
   background: var(--fill-quaternary);
 }
 .challenge-title {
-  font-size: 12px;
-  font-weight: 700;
+  
   color: var(--label-primary);
   font-family: var(--font-mono);
   margin-bottom: 4px;
+  text-transform: uppercase;
 }
 .challenge-desc {
   font-size: var(--font-size-small);
-  color: var(--label-tertiary);
+  color: var(--label-secondary);
   margin-bottom: 6px;
+  padding: 10px 0;
 }
 .challenge-actions {
   display: flex;
   gap: 6px;
-}
-.challenge-list {
-  padding: 4px 0;
 }
 .challenge-item-header {
   display: flex;
@@ -1668,7 +1665,7 @@ body {
 
 /* ===== Solutions Panel ===== */
 .solutions-panel {
-  padding: 8px;
+  padding: 0px;
   overflow-y: auto;
 }
 .solution-save-form,
@@ -1676,7 +1673,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px;
+  padding: 20px;
   background: var(--bg-primary);
   border: 1px solid var(--separator-opaque);
   margin-bottom: 10px;
@@ -1710,7 +1707,7 @@ body {
 }
 .solution-title,
 .solution-name {
-  font-size: 12px;
+  font-size: var(--font-size-small);
   font-weight: 700;
   color: var(--label-primary);
   font-family: var(--font-mono);
@@ -1894,7 +1891,7 @@ body {
 
 /* Text Display */
 .text-display {
-  font-size: 12px;
+  font-size: var(--font-size-small);
   color: var(--label-primary);
   font-family: var(--font-mono);
   padding: 8px;
@@ -2024,7 +2021,7 @@ body {
   padding-bottom: 4px;
 }
 .widget-value {
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   font-weight: 700;
   color: var(--label-primary);
   font-family: var(--font-mono);
@@ -2106,7 +2103,7 @@ body {
   color: var(--label-primary);
   text-align: left;
   cursor: pointer;
-  font-size: 14px;
+  font-size: var(--font-size-medium);
   transition: background 0.15s;
   border-bottom: 1px solid var(--separator-opaque);
   font-family: var(--font-ui);

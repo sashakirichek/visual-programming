@@ -116,7 +116,7 @@ export default function Toolbar({ leftPanel, setLeftPanel, rightPanel, setRightP
 
   const buildShareUrl = useCallback(() => {
     const json = exportToJson();
-    const encoded = btoa(unescape(encodeURIComponent(json)));
+    const encoded = btoa(encodeURIComponent(json));
     const url = new URL(window.location.href);
     url.search = "";
     url.searchParams.set("flow", encoded);

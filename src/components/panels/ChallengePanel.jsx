@@ -164,20 +164,18 @@ export default function ChallengePanel() {
   return (
     <div className="challenge-panel">
       <div className="panel-header">CHALLENGES</div>
-      <div className="challenge-list">
-        {CHALLENGES.map((ch) => (
-          <div key={ch.id} className="challenge-item">
-            <div className="challenge-item-header">
-              <span className="challenge-title">{ch.title}</span>
-              <span className={`difficulty-badge ${ch.difficulty}`}>{ch.difficulty.toUpperCase()}</span>
-            </div>
-            <p className="challenge-desc">{ch.description}</p>
-            <button className="toolbar-btn" onClick={() => startChallenge(ch)}>
-              START
-            </button>
+      {CHALLENGES.map((ch) => (
+        <div key={ch.id} className="challenge-item">
+          <div className="challenge-item-header">
+            <span className="challenge-title">{ch.title}</span>
+            <span className={`difficulty-badge ${ch.difficulty}`}>{ch.difficulty.toUpperCase()}</span>
           </div>
-        ))}
-      </div>
+          <p className="challenge-desc">{ch.description}</p>
+          <button className="toolbar-btn" onClick={() => startChallenge(ch)}>
+            START
+          </button>
+        </div>
+      ))}
     </div>
   );
 }
